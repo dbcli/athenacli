@@ -1,0 +1,50 @@
+# vi: ft=dosini
+[main]
+
+# Set AWS credentials or Odin material set
+
+# AWS credentials
+aws_access_key_id = ''
+aws_secret_access_key = ''
+# Odin material set
+odin_material_set = ''
+
+# Athena connection info
+region_name = 'us-west-2'
+schema_name = 'default'
+
+# Amazon S3 staging directory where query results are stored
+# NOTE: S3 location should be in the same region.
+s3_staging_dir = ''
+
+# log_file location.
+log_file = ~/.athenacli/app.log
+
+# history_file location.
+history_file = '~/.athenacli/history'
+
+# Multi-line mode allows breaking up the sql statements into multiple lines. If
+# this is set to True, then the end of the statements must have a semi-colon.
+# If this is set to False then sql statements can't be split into multiple
+# lines. End of line (return) is considered as the end of the statement.
+multi_line = True
+
+# Default log level. Possible values: "CRITICAL", "ERROR", "WARNING", "INFO"
+# and "DEBUG". "NONE" disables logging.
+log_level = INFO
+
+# Table format. Possible values: ascii, double, github,
+# psql, plain, simple, grid, fancy_grid, pipe, orgtbl, rst, mediawiki, html,
+# latex, latex_booktabs, textile, moinmoin, jira, vertical, tsv, csv.
+# Recommended: ascii
+table_format = ascii
+
+# Keybindings: Possible values: emacs, vi.
+# Emacs mode: Ctrl-A is home, Ctrl-E is end. All emacs keybindings are available in the REPL.
+# When Vi mode is enabled you can use modal editing features offered by Vi in the REPL.
+key_bindings = emacs
+
+# Athena prompt
+# \d - Database name
+# \r - Region
+prompt = '\r:\d> '
