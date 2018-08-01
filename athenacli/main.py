@@ -162,9 +162,15 @@ class AthenaCli(object):
             database or _cfg['schema_name']
         )
 
-    def get_aws_key(self, material_set):
-        'Return the (access_key, secret_access_key) pair for a odin material set.'
-
+    def run_query(self, query, new_line=True):
+        """Runs *query*."""
+        results = self.sqlexecute.run(query)
+        for result in results:
+            title, cur, headers, _ = result
+            self.formatter.query = query
+            output = self.format_output(title, cur, headers)
+            for line in output:
+                click.echo(line, nl=new_line)
 
     def run_cli(self):
         self.iterations = 0
@@ -468,9 +474,6 @@ class AthenaCli(object):
 
     def get_prompt(self, string):
         sqlexecute = self.sqlexecute
-        LOGGER.debug("aaaaaaaaaa %s" % string)
-        LOGGER.debug(sqlexecute.database)
-
         string = string.replace('\\r', sqlexecute.region_name or '(none)')
         string = string.replace('\\d', sqlexecute.database or '(none)')
         return string
@@ -486,10 +489,16 @@ class AthenaCli(object):
 def need_completion_refresh(queries):
     """Determines if the completion needs a refresh by checking if the sql
     statement is an alter, create, drop or change db."""
+    tokens = {
+        'use', '\\u',
+        'create',
+        'drop'
+    }
+
     for query in sqlparse.split(queries):
         try:
             first_token = query.split()[0]
-            if first_token.lower() in ('use', '\\u'):
+            if first_token.lower() in tokens:
                 return True
         except Exception:
             return False
@@ -512,8 +521,9 @@ def is_select(status):
 
 
 @click.command()
+@click.option('-e', '--execute', type=str, help='Execut command (or a file) and quit.')
 @click.argument('database', default='', nargs=1)
-def cli(database):
+def cli(execute, database):
     '''A Athena terminal client with auto-completion and syntax highlighting.
 
     \b
@@ -534,9 +544,23 @@ def cli(database):
         write_default_config(DEFAULT_CONFIG_FILE, ATHENACLIRC)
         sys.exit(1)
 
-    print("========******" * 10)
-
     athenacli = AthenaCli(database=database)
+
+    #  --execute argument
+    if execute:
+        if os.path.exists(execute):
+            with open(execute) as f:
+                query = f.read()
+        else:
+            query = execute
+        try:
+            athenacli.formatter.format_name = 'csv'
+            athenacli.run_query(query)
+            exit(0)
+        except Exception as e:
+            click.secho(str(e), err=True, fg='red')
+            exit(1)
+
     athenacli.run_cli()
 
 
