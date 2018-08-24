@@ -1,4 +1,4 @@
-**NOTE** I only tested it on Python 3.7
+**NOTE**: I only tested it on Python 3.7
 
 # Introduction
 
@@ -18,7 +18,7 @@ $ pip install -e .
 
 ## Config
 
-A config file is automatically created at ~/.athenacli/athenaclirc at first launch. See the file itself for a description of all available options.
+A config file is automatically created at ~/.athenacli/athenaclirc at first launch (run `athenacli`). See the file itself for a description of all available options.
 
 Below 3 arguments are required.
 
@@ -41,6 +41,12 @@ $ athenacli -e examples/create_table.sql
 
 ``` bash
 $ athenacli -e 'select elb_name, request_ip from elb_logs LIMIT 10'
+```
+
+## Have fun
+
+``` bash
+$ athenacli
 ```
 
 # Features
