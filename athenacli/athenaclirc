@@ -1,13 +1,11 @@
 # vi: ft=dosini
 [main]
 
-# Set AWS credentials or Odin material set
+# Set AWS credentials
 
 # AWS credentials
 aws_access_key_id = ''
 aws_secret_access_key = ''
-# Odin material set
-odin_material_set = ''
 
 # Athena connection info
 region_name = 'us-west-2'
