@@ -1,9 +1,12 @@
 # encoding: utf-8
 
+import logging
 import sqlparse
 import pyathena
 
 from athenacli.packages import special
+
+logger = logging.getLogger(__name__)
 
 
 class SQLExecute(object):
@@ -79,9 +82,13 @@ class SQLExecute(object):
         # e.g. SELECT or SHOW.
         if cursor.description is not None:
             headers = [x[0] for x in cursor.description]
-
-        status = 'Query OK'
-        return (title, cursor if cursor.description else None, headers, status)
+            rows = cursor.fetchall()
+            status = '%d row%s in set' % (len(rows), '' if len(rows) == 1 else 's')
+        else:
+            logger.debug('No rows in result.')
+            rows = None
+            status = 'Query OK'
+        return (title, rows, headers, status)
 
     def tables(self):
         '''Yields table names.'''

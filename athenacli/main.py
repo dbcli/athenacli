@@ -59,7 +59,6 @@ ATHENACLIRC = '~/.athenacli/athenaclirc'
 DEFAULT_CONFIG_FILE = os.path.join(PACKAGE_ROOT, 'athenaclirc')
 
 
-
 class AthenaCli(object):
     DEFAULT_PROMPT = '\\d@\\r> '
     MAX_LEN_PROMPT = 45
@@ -166,9 +165,9 @@ class AthenaCli(object):
         """Runs *query*."""
         results = self.sqlexecute.run(query)
         for result in results:
-            title, cur, headers, _ = result
+            title, rows, headers, _ = result
             self.formatter.query = query
-            output = self.format_output(title, cur, headers)
+            output = self.format_output(title, rows, headers)
             for line in output:
                 click.echo(line, nl=new_line)
 
@@ -199,9 +198,8 @@ class AthenaCli(object):
                 threshold = 1000
                 result_count = 0
 
-                for title, cur, headers, status in res:
-                    if (is_select(status)
-                        and cur and cur.rowcount > threshold):
+                for title, rows, headers, status in res:
+                    if rows and len(rows) > threshold:
                         self.echo(
                             'The result set has more than {} rows.'.format(threshold),
                             fg='red'
@@ -211,7 +209,7 @@ class AthenaCli(object):
                             break
 
                     formatted = self.format_output(
-                        title, cur, headers, special.is_expanded_output(), None
+                        title, rows, headers, special.is_expanded_output(), None
                     )
 
                     t = time() - start
@@ -512,13 +510,6 @@ def is_mutating(status):
     mutating = set(['insert', 'update', 'delete', 'alter', 'create', 'drop',
                     'replace', 'truncate', 'load'])
     return status.split(None, 1)[0].lower() in mutating
-
-def is_select(status):
-    """Returns true if the first word in status is 'select'."""
-    if not status:
-        return False
-    return status.split(None, 1)[0].lower() == 'select'
-
 
 @click.command()
 @click.option('-e', '--execute', type=str, help='Execut command (or a file) and quit.')
