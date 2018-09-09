@@ -2,12 +2,16 @@ from __future__ import print_function
 import os
 import sys
 import sqlparse
+import logging
 from collections import namedtuple
 from sqlparse.sql import Comparison, Identifier, Where
 from sqlparse.compat import text_type
 
 from athenacli.packages.parseutils import last_word, extract_tables, find_prev_keyword
 from athenacli.packages.special import parse_special_command
+
+_logger = logging.getLogger(__name__)
+
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
@@ -219,7 +223,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
                 return (Keyword(),)
 
         # We're probably in a function argument list
-        return (Column(tables=extract_tables(full_text)))
+        return (Column(tables=extract_tables(full_text)),)
     elif token_v in ('set', 'by', 'distinct'):
         return (Column(tables=extract_tables(full_text)))
     elif token_v == 'as':
