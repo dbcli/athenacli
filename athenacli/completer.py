@@ -273,10 +273,17 @@ class AthenaCompleter(Completer):
         # TODO
         return set()
 
-    def get_keyword_matches(self, _, word_before_cursor):
+    def get_keyword_matches(self, suggestion, word_before_cursor):
+        keywords = self.keywords_tree.keys()
+        # Get well known following keywords for the last token. If any, narrow
+        # candidates to this list.
+        next_keywords = self.keywords_tree.get(suggestion.last_token, [])
+        if next_keywords:
+            keywords = next_keywords
+
         return self.find_matches(
             word_before_cursor,
-            self.keywords,
+            keywords,
             start_only=True,
             fuzzy=False,
             casing=self.keyword_casing

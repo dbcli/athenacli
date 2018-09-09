@@ -25,12 +25,15 @@ Function = namedtuple('Function', ['schema', 'filter'])
 # For convenience, don't require the `filter` argument in Function constructor
 Function.__new__.__defaults__ = (None, None)
 
+Keyword = namedtuple('Keyword', ['last_token'])
+Keyword.__new__.__defaults__ = (None,)
+
 Table = namedtuple('Table', ['schema'])
 View = namedtuple('View', ['schema'])
 Alias = namedtuple('Alias', ['aliases'])
 Database = namedtuple('Database', [])
 Schema = namedtuple('Schema', [])
-Keyword = namedtuple('Keyword', [])
+Keyword.__new__.__defaults__ = (None,)
 Show = namedtuple('Show', [])
 Special = namedtuple('Special', [])
 TableFormat = namedtuple('TableFormat', [])
@@ -75,7 +78,7 @@ def suggest_type(full_text, text_before_cursor):
         else:
             parsed = sqlparse.parse(text_before_cursor)
     except (TypeError, AttributeError):
-        return [{'type': 'keyword'}]
+        return (Keyword(),)
 
     if len(parsed) > 1:
         # Multiple statements being edited -- isolate the current one by
@@ -214,8 +217,6 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
             # do a sub-select.
             if last_word(text_before_cursor, 'all_punctuations').startswith('('):
                 return (Keyword(),)
-        elif p.token_first().value.lower() == 'show':
-            return (Show(),)
 
         # We're probably in a function argument list
         return (Column(tables=extract_tables(full_text)))
@@ -224,8 +225,6 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
     elif token_v == 'as':
         # Don't suggest anything for an alias
         return tuple()
-    elif token_v in ('show'):
-        return (Show(),)
     elif token_v in ('select', 'where', 'having'):
         # Check for a table alias or schema qualification
         parent = (identifier and identifier.get_parent_name()) or []
@@ -245,7 +244,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
                 Column(tables=tables),
                 Function(schema=None),
                 Alias(aliases=aliases),
-                Keyword(),
+                Keyword(token_v.upper()),
             )
     elif (token_v.endswith('join') and token.is_keyword) or (token_v in
             ('copy', 'from', 'update', 'into', 'describe', 'truncate',
@@ -266,9 +265,15 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
 
         return suggest
 
-    elif token_v in ('table', 'view', 'function'):
+    elif token_v in ('table', 'view', 'function', 'tblproperties'):
         # E.g. 'DROP FUNCTION <funcname>', 'ALTER TABLE <tablname>'
-        rel_type = {'table': Table, 'view': View, 'function': Function}[token_v]
+        rel_type = {
+            'table': Table,
+            'view': View,
+            'function': Function,
+            'tblproperties': Table,
+        }[token_v]
+
         schema = (identifier and identifier.get_parent_name()) or None
         if schema:
             return (rel_type(schema=schema))
@@ -314,8 +319,10 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
                 prev_keyword, text_before_cursor, full_text, identifier)
         else:
             return tuple()
+    elif token_v in {'alter', 'create', 'drop', 'show'}:
+        return (Keyword(token_v.upper()),)
     else:
-        return (Keyword(),)
+        return (Keyword(token_v.upper()),)
 
 
 def identifies(id, schema, table, alias):

@@ -1,18 +1,17 @@
 {
     "keywords": {
         "ALTER": [
-            "DATABASE SET DBPROPERTIES",
-            "TABLE ADD PARTITION",
-            "TABLE DROP PARTITION",
-            "TABLE RENAME PARTITION",
-            "TABLE SET LOCATION",
-            "TABLE SET TBLPROPERTIES"
+            "DATABASE",
+            "SCHEMA",
+            "TABLE"
         ],
         "CREATE": [
             "DATABASE",
+            "EXTERNAL",
             "TABLE",
             "VIEW"
         ],
+        "EXTERNAL": ["TABLE"],
         "DESCRIBE": [
             "TABLE",
             "VIEW"
@@ -26,15 +25,17 @@
             "REPAIR TABLE"
         ],
         "SHOW": [
-            "COLUMNS",
+            "COLUMNS IN",
             "CREATE TABLE",
             "CREATE VIEW",
             "DATABASES",
+            "SCHEMAS",
             "PARTITIONS",
             "TABLES",
             "TBLPROPERTIES",
             "VIEWS"
-        ]
+        ],
+        "REPLACE": ["VIEW"]
     },
     "functions": [
         "AVG",
