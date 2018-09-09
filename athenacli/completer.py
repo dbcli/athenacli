@@ -9,35 +9,15 @@ from prompt_toolkit.completion import Completer, Completion
 from .packages.completion_engine import suggest_type
 from .packages.parseutils import last_word
 from .packages.filepaths import parse_path, complete_path, suggest_path
+from .packages.literals.main import get_literals
 
 _logger = logging.getLogger(__name__)
 
 
 class AthenaCompleter(Completer):
-    keywords = ['ACCESS', 'ADD', 'ALL', 'ALTER TABLE', 'AND', 'ANY', 'AS',
-                'ASC', 'AUTO_INCREMENT', 'BEFORE', 'BEGIN', 'BETWEEN', 'BINARY', 'BY',
-                'CASE', 'CHAR', 'CHECK', 'COLUMN', 'COMMENT', 'COMMIT', 'CONSTRAINT',
-                'CHANGE MASTER TO', 'CHARACTER SET', 'COLLATE', 'CREATE', 'CURRENT', 'CURRENT_TIMESTAMP', 'DATABASE', 'DATE',
-                'DECIMAL', 'DEFAULT', 'DELETE FROM', 'DELIMITER', 'DESC',
-                'DESCRIBE', 'DROP', 'ELSE', 'END', 'ENGINE', 'ESCAPE', 'EXISTS',
-                'FILE', 'FLOAT', 'FOR', 'FOREIGN KEY', 'FORMAT', 'FROM', 'FULL', 'FUNCTION', 'GRANT',
-                'GROUP BY', 'HAVING', 'HOST', 'IDENTIFIED', 'IN', 'INCREMENT', 'INDEX',
-                'INSERT INTO', 'INTEGER', 'INTO', 'INTERVAL', 'IS', 'JOIN', 'KEY', 'LEFT',
-                'LEVEL', 'LIKE', 'LIMIT', 'LOCK', 'LOGS', 'LONG', 'MASTER', 'MODE',
-                'MODIFY', 'NOT', 'NULL', 'NUMBER', 'OFFSET', 'ON', 'OPTION', 'OR',
-                'ORDER BY', 'OUTER', 'OWNER', 'PASSWORD', 'PORT', 'PRIMARY',
-                'PRIVILEGES', 'PROCESSLIST', 'PURGE', 'REFERENCES', 'REGEXP', 'RENAME', 'REPAIR', 'RESET',
-                'REVOKE', 'RIGHT', 'ROLLBACK','ROW', 'ROWS', 'ROW_FORMAT', 'SELECT', 'SESSION', 'SET',
-                'SHARE', 'SHOW', 'SLAVE', 'SMALLINT', 'START', 'STOP', 'TABLE', 'THEN',
-                'TO', 'TRANSACTION', 'TRIGGER', 'TRUNCATE', 'UNION', 'UNIQUE', 'UNSIGNED', 'UPDATE',
-                'USE', 'USER', 'USING', 'VALUES', 'VARCHAR', 'VIEW', 'WHEN', 'WHERE',
-                'WITH']
-
-    functions = ['AVG', 'CONCAT', 'COUNT', 'DISTINCT', 'FIRST', 'FORMAT', 'LAST',
-                 'LCASE', 'LEN', 'MAX', 'MIN', 'MID', 'NOW', 'ROUND', 'SUM',
-                 'TOP', 'UCASE']
-
-    show_items = ['TABLES', 'DATABASES', 'SCHEMAS', 'PARTITIONS']
+    keywords = get_literals('keywords')
+    functions = get_literals('functions')
+    show_items = get_literals('show_items')
 
     users = []
 
