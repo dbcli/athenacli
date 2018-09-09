@@ -39,14 +39,6 @@ class AthenaCompleter(Completer):
 
     show_items = ['TABLES', 'DATABASES', 'SCHEMAS', 'PARTITIONS']
 
-    change_items = ['MASTER_BIND', 'MASTER_HOST', 'MASTER_USER',
-                    'MASTER_PASSWORD', 'MASTER_PORT', 'MASTER_CONNECT_RETRY',
-                    'MASTER_HEARTBEAT_PERIOD', 'MASTER_LOG_FILE',
-                    'MASTER_LOG_POS', 'RELAY_LOG_FILE', 'RELAY_LOG_POS',
-                    'MASTER_SSL', 'MASTER_SSL_CA', 'MASTER_SSL_CAPATH',
-                    'MASTER_SSL_CERT', 'MASTER_SSL_KEY', 'MASTER_SSL_CIPHER',
-                    'MASTER_SSL_VERIFY_SERVER_CERT', 'IGNORE_SERVER_IDS']
-
     users = []
 
     def __init__(self, smart_completion=True, supported_formats=(), keyword_casing='upper'):
@@ -93,11 +85,6 @@ class AthenaCompleter(Completer):
     def extend_keywords(self, additional_keywords):
         self.keywords.extend(additional_keywords)
         self.all_completions.update(additional_keywords)
-
-    def extend_change_items(self, change_items):
-        for change_item in change_items:
-            self.change_items.extend(change_item)
-            self.all_completions.update(change_item)
 
     def extend_users(self, users):
         for user in users:
@@ -246,108 +233,125 @@ class AthenaCompleter(Completer):
         suggestions = suggest_type(document.text, document.text_before_cursor)
 
         for suggestion in suggestions:
-
             _logger.debug('Suggestion type: %r', suggestion['type'])
-
-            if suggestion['type'] == 'column':
-                tables = suggestion['tables']
-                _logger.debug("Completion column scope: %r", tables)
-                scoped_cols = self.populate_scoped_cols(tables)
-                if suggestion.get('drop_unique'):
-                    # drop_unique is used for 'tb11 JOIN tbl2 USING (...'
-                    # which should suggest only columns that appear in more than
-                    # one table
-                    scoped_cols = [
-                        col for (col, count) in Counter(scoped_cols).items()
-                        if count > 1 and col != '*'
-                    ]
-
-                cols = self.find_matches(word_before_cursor, scoped_cols)
-                completions.extend(cols)
-
-            elif suggestion['type'] == 'function':
-                # suggest user-defined functions using substring matching
-                funcs = self.populate_schema_objects(suggestion['schema'],
-                                                     'functions')
-                user_funcs = self.find_matches(word_before_cursor, funcs)
-                completions.extend(user_funcs)
-
-                # suggest hardcoded functions using startswith matching only if
-                # there is no schema qualifier. If a schema qualifier is
-                # present it probably denotes a table.
-                # eg: SELECT * FROM users u WHERE u.
-                if not suggestion['schema']:
-                    predefined_funcs = self.find_matches(word_before_cursor,
-                                                         self.functions,
-                                                         start_only=True,
-                                                         fuzzy=False,
-                                                         casing=self.keyword_casing)
-                    completions.extend(predefined_funcs)
-
-            elif suggestion['type'] == 'table':
-                tables = self.populate_schema_objects(suggestion['schema'],
-                                                      'tables')
-                tables = self.find_matches(word_before_cursor, tables)
-                completions.extend(tables)
-
-            elif suggestion['type'] == 'view':
-                views = self.populate_schema_objects(suggestion['schema'],
-                                                     'views')
-                views = self.find_matches(word_before_cursor, views)
-                completions.extend(views)
-
-            elif suggestion['type'] == 'alias':
-                aliases = suggestion['aliases']
-                aliases = self.find_matches(word_before_cursor, aliases)
-                completions.extend(aliases)
-
-            elif suggestion['type'] == 'database':
-                dbs = self.find_matches(word_before_cursor, self.databases)
-                completions.extend(dbs)
-
-            elif suggestion['type'] == 'keyword':
-                keywords = self.find_matches(word_before_cursor, self.keywords,
-                                             start_only=True,
-                                             fuzzy=False,
-                                             casing=self.keyword_casing)
-                completions.extend(keywords)
-
-            elif suggestion['type'] == 'show':
-                show_items = self.find_matches(word_before_cursor,
-                                               self.show_items,
-                                               start_only=False,
-                                               fuzzy=True,
-                                               casing=self.keyword_casing)
-                completions.extend(show_items)
-
-            elif suggestion['type'] == 'change':
-                change_items = self.find_matches(word_before_cursor,
-                                                 self.change_items,
-                                                 start_only=False,
-                                                 fuzzy=True)
-                completions.extend(change_items)
-            elif suggestion['type'] == 'user':
-                users = self.find_matches(word_before_cursor, self.users,
-                                          start_only=False,
-                                          fuzzy=True)
-                completions.extend(users)
-
-            elif suggestion['type'] == 'special':
-                special = self.find_matches(word_before_cursor,
-                                            self.special_commands,
-                                            start_only=True,
-                                            fuzzy=False)
-                completions.extend(special)
-            elif suggestion['type'] == 'table_format':
-                formats = self.find_matches(word_before_cursor,
-                                            self.table_formats,
-                                            start_only=True, fuzzy=False)
-                completions.extend(formats)
-            elif suggestion['type'] == 'file_name':
-                file_names = self.find_files(word_before_cursor)
-                completions.extend(file_names)
+            # Map suggestion type to method
+            # e.g. 'table' -> self.get_table_matches
+            matcher = self.suggestion_matchers[suggestion['type']]
+            completions.extend(matcher(self, suggestion, word_before_cursor))
 
         return completions
+
+    def get_column_matches(self, suggestion, word_before_cursor):
+        tables = suggestion['tables']
+        _logger.debug('Completion column scope: %r', tables)
+        scoped_cols = self.populate_scoped_cols(tables)
+        if suggestion.get('drop_unique'):
+            # drop_unique is used for 'tb11 JOIN tbl2 USING (...'
+            # which should suggest only columns that appear in more than
+            # one table
+            scoped_cols = [
+                col for (col, count) in Counter(scoped_cols).items()
+                if count > 1 and col != '*'
+            ]
+
+        return self.find_matches(word_before_cursor, scoped_cols)
+
+    def get_function_matches(self, suggestion, word_before_cursor):
+        # suggest user-defined functions using substring matching
+        funcs = self.populate_schema_objects(suggestion['schema'], 'functions')
+        user_funcs = set(self.find_matches(word_before_cursor, funcs))
+
+        # suggest hardcoded functions using startswith matching only if
+        # there is no schema qualifier. If a schema qualifier is
+        # present it probably denotes a table.
+        # eg: SELECT * FROM users u WHERE u.
+        if not suggestion['schema']:
+            predefined_funcs = self.find_matches(
+                word_before_cursor,
+                self.functions,
+                start_only=True,
+                fuzzy=False,
+                casing=self.keyword_casing
+            )
+            return user_funcs | set(predefined_funcs)
+
+        return user_funcs
+
+    def get_table_matches(self, suggestion, word_before_cursor):
+        tables = self.populate_schema_objects(suggestion['schema'], 'tables')
+        return self.find_matches(word_before_cursor, tables)
+
+    def get_view_matches(self, suggestion, word_before_cursor):
+        views = self.populate_schema_objects(suggestion['schema'], 'views')
+        return self.find_matches(word_before_cursor, views)
+
+    def get_alias_matches(self, suggestion, word_before_cursor):
+        aliases = suggestion['aliases']
+        return self.find_matches(word_before_cursor, aliases)
+
+    def get_database_matches(self, _, word_before_cursor):
+        return self.find_matches(word_before_cursor, self.databases)
+
+    def get_schema_matches(self, _, word_before_cursor):
+        # TODO
+        return set()
+
+    def get_keyword_matches(self, _, word_before_cursor):
+        return self.find_matches(
+            word_before_cursor,
+            self.keywords,
+            start_only=True,
+            fuzzy=False,
+            casing=self.keyword_casing
+        )
+
+    def get_show_matches(self, _, word_before_cursor):
+        return self.find_matches(
+            word_before_cursor,
+            self.show_items,
+            casing=self.keyword_casing
+        )
+
+    def get_user_matches(self, _, word_before_cursor):
+        return self.find_matches(
+            word_before_cursor,
+            self.users
+        )
+
+    def get_special_matches(self, _, word_before_cursor):
+        return self.find_matches(
+            word_before_cursor,
+            self.special_commands,
+            start_only=True,
+            fuzzy=True
+        )
+
+    def get_table_format_matches(self, _, word_before_cursor):
+        return self.find_matches(
+            word_before_cursor,
+            self.table_formats,
+            start_only=True,
+            fuzzy=False
+        )
+
+    def get_file_name_matches(self, _, word_before_cursor):
+        return self.find_files(word_before_cursor)
+
+    suggestion_matchers = {
+       'column': get_column_matches,
+       'function': get_function_matches,
+       'table': get_table_matches,
+       'view': get_view_matches,
+       'alias': get_alias_matches,
+       'database': get_database_matches,
+       'schema': get_schema_matches,
+       'keyword': get_keyword_matches,
+       'show': get_show_matches,
+       'user': get_user_matches,
+       'special': get_special_matches,
+       'table_format': get_table_format_matches,
+       'file_name': get_file_name_matches,
+    }
 
     def find_files(self, word):
         """Yield matching directory or file names.
