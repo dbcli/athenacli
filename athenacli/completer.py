@@ -3,10 +3,14 @@ from __future__ import unicode_literals
 import logging
 from re import compile, escape
 from collections import Counter
+from itertools import chain
 
 from prompt_toolkit.completion import Completer, Completion
 
-from .packages.completion_engine import suggest_type
+from .packages.completion_engine import (
+    suggest_type, Column, Function, Table, View, Alias, Database, Schema,
+    Keyword, Show, Special, TableFormat, FileName
+)
 from .packages.parseutils import last_word
 from .packages.filepaths import parse_path, complete_path, suggest_path
 from .packages.literals.main import get_literals
@@ -15,11 +19,9 @@ _logger = logging.getLogger(__name__)
 
 
 class AthenaCompleter(Completer):
-    keywords = get_literals('keywords')
+    keywords_tree = get_literals('keywords', type_=dict)
+    keywords = tuple(chain(keywords_tree.keys(), *keywords_tree.values()))
     functions = get_literals('functions')
-    show_items = get_literals('show_items')
-
-    users = []
 
     def __init__(self, smart_completion=True, supported_formats=(), keyword_casing='upper'):
         super(self.__class__, self).__init__()
@@ -65,11 +67,6 @@ class AthenaCompleter(Completer):
     def extend_keywords(self, additional_keywords):
         self.keywords.extend(additional_keywords)
         self.all_completions.update(additional_keywords)
-
-    def extend_users(self, users):
-        for user in users:
-            self.users.extend(user)
-            self.all_completions.update(user)
 
     def extend_schemata(self, schema):
         if schema is None:
@@ -151,7 +148,6 @@ class AthenaCompleter(Completer):
 
     def reset_completions(self):
         self.databases = []
-        self.users = []
         self.dbname = ''
         self.dbmetadata = {'tables': {}, 'views': {}, 'functions': {}}
         self.all_completions = set(self.keywords + self.functions)
@@ -213,19 +209,20 @@ class AthenaCompleter(Completer):
         suggestions = suggest_type(document.text, document.text_before_cursor)
 
         for suggestion in suggestions:
-            _logger.debug('Suggestion type: %r', suggestion['type'])
+            suggestion_type = type(suggestion)
+            _logger.debug('Suggestion type: %r', suggestion_type)
             # Map suggestion type to method
             # e.g. 'table' -> self.get_table_matches
-            matcher = self.suggestion_matchers[suggestion['type']]
+            matcher = self.suggestion_matchers[suggestion_type]
             completions.extend(matcher(self, suggestion, word_before_cursor))
 
         return completions
 
     def get_column_matches(self, suggestion, word_before_cursor):
-        tables = suggestion['tables']
+        tables = suggestion.tables
         _logger.debug('Completion column scope: %r', tables)
         scoped_cols = self.populate_scoped_cols(tables)
-        if suggestion.get('drop_unique'):
+        if suggestion.drop_unique:
             # drop_unique is used for 'tb11 JOIN tbl2 USING (...'
             # which should suggest only columns that appear in more than
             # one table
@@ -238,14 +235,14 @@ class AthenaCompleter(Completer):
 
     def get_function_matches(self, suggestion, word_before_cursor):
         # suggest user-defined functions using substring matching
-        funcs = self.populate_schema_objects(suggestion['schema'], 'functions')
+        funcs = self.populate_schema_objects(suggestion.schema, 'functions')
         user_funcs = set(self.find_matches(word_before_cursor, funcs))
 
         # suggest hardcoded functions using startswith matching only if
         # there is no schema qualifier. If a schema qualifier is
         # present it probably denotes a table.
         # eg: SELECT * FROM users u WHERE u.
-        if not suggestion['schema']:
+        if not suggestion.schema:
             predefined_funcs = self.find_matches(
                 word_before_cursor,
                 self.functions,
@@ -258,15 +255,15 @@ class AthenaCompleter(Completer):
         return user_funcs
 
     def get_table_matches(self, suggestion, word_before_cursor):
-        tables = self.populate_schema_objects(suggestion['schema'], 'tables')
+        tables = self.populate_schema_objects(suggestion.schema, 'tables')
         return self.find_matches(word_before_cursor, tables)
 
     def get_view_matches(self, suggestion, word_before_cursor):
-        views = self.populate_schema_objects(suggestion['schema'], 'views')
+        views = self.populate_schema_objects(suggestion.schema, 'views')
         return self.find_matches(word_before_cursor, views)
 
     def get_alias_matches(self, suggestion, word_before_cursor):
-        aliases = suggestion['aliases']
+        aliases = suggestion.aliases
         return self.find_matches(word_before_cursor, aliases)
 
     def get_database_matches(self, _, word_before_cursor):
@@ -292,12 +289,6 @@ class AthenaCompleter(Completer):
             casing=self.keyword_casing
         )
 
-    def get_user_matches(self, _, word_before_cursor):
-        return self.find_matches(
-            word_before_cursor,
-            self.users
-        )
-
     def get_special_matches(self, _, word_before_cursor):
         return self.find_matches(
             word_before_cursor,
@@ -318,19 +309,18 @@ class AthenaCompleter(Completer):
         return self.find_files(word_before_cursor)
 
     suggestion_matchers = {
-       'column': get_column_matches,
-       'function': get_function_matches,
-       'table': get_table_matches,
-       'view': get_view_matches,
-       'alias': get_alias_matches,
-       'database': get_database_matches,
-       'schema': get_schema_matches,
-       'keyword': get_keyword_matches,
-       'show': get_show_matches,
-       'user': get_user_matches,
-       'special': get_special_matches,
-       'table_format': get_table_format_matches,
-       'file_name': get_file_name_matches,
+       Column: get_column_matches,
+       Function: get_function_matches,
+       Table: get_table_matches,
+       View: get_view_matches,
+       Alias: get_alias_matches,
+       Database: get_database_matches,
+       Schema: get_schema_matches,
+       Keyword: get_keyword_matches,
+       Show: get_show_matches,
+       Special: get_special_matches,
+       TableFormat: get_table_format_matches,
+       FileName: get_file_name_matches,
     }
 
     def find_files(self, word):

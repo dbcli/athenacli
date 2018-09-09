@@ -2,10 +2,12 @@ from __future__ import print_function
 import os
 import sys
 import sqlparse
+from collections import namedtuple
 from sqlparse.sql import Comparison, Identifier, Where
 from sqlparse.compat import text_type
-from .parseutils import last_word, extract_tables, find_prev_keyword
-from .special import parse_special_command
+
+from athenacli.packages.parseutils import last_word, extract_tables, find_prev_keyword
+from athenacli.packages.special import parse_special_command
 
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
@@ -14,6 +16,26 @@ if PY3:
     string_types = str
 else:
     string_types = basestring
+
+
+Column = namedtuple('Column', ['tables', 'drop_unique'])
+Column.__new__.__defaults__ = (None, None)
+
+Function = namedtuple('Function', ['schema', 'filter'])
+# For convenience, don't require the `filter` argument in Function constructor
+Function.__new__.__defaults__ = (None, None)
+
+Table = namedtuple('Table', ['schema'])
+View = namedtuple('View', ['schema'])
+Alias = namedtuple('Alias', ['aliases'])
+Database = namedtuple('Database', [])
+Schema = namedtuple('Schema', [])
+Keyword = namedtuple('Keyword', [])
+Show = namedtuple('Show', [])
+Special = namedtuple('Special', [])
+TableFormat = namedtuple('TableFormat', [])
+FileName = namedtuple('FileName', [])
+NamedQuery = namedtuple('NamedQuery', [])
 
 
 def suggest_type(full_text, text_before_cursor):
@@ -98,27 +120,27 @@ def suggest_special(text):
 
     if cmd == text:
         # Trying to complete the special command itself
-        return [{'type': 'special'}]
+        return (Special(),)
 
     if cmd in ('\\u', '\\r'):
-        return [{'type': 'database'}]
+        return (Database(),)
 
     if cmd in ('\\T'):
-        return [{'type': 'table_format'}]
+        return (TableFormat(),)
 
-    if cmd in ['\\f', '\\fs', '\\fd']:
-        return [{'type': 'favoritequery'}]
+    if cmd in ['\\n', '\\ns', '\\nd']:
+        return (NamedQuery(),)
 
     if cmd in ['\\dt', '\\dt+']:
-        return [
-            {'type': 'table', 'schema': []},
-            {'type': 'view', 'schema': []},
-            {'type': 'schema'},
-        ]
+        return (
+            Table(schema=None),
+            View(schema=None),
+            Schema(),
+        )
     elif cmd in ['\\.', 'source']:
-        return[{'type': 'file_name'}]
+        return (FileName(),)
 
-    return [{'type': 'keyword'}, {'type': 'special'}]
+    return (Keyword(), Special())
 
 
 def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier):
@@ -146,7 +168,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
     is_operand = lambda x: x and any([x.endswith(op) for op in ['+', '-', '*', '/']])
 
     if not token:
-        return [{'type': 'keyword'}, {'type': 'special'}]
+        return (Keyword(), Special())
     elif token_v.endswith('('):
         p = sqlparse.parse(text_before_cursor)[0]
 
@@ -175,7 +197,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
 
             prev_tok = prev_tok.value.lower()
             if prev_tok == 'exists':
-                return [{'type': 'keyword'}]
+                return (Keyword(),)
             else:
                 return column_suggestions
 
@@ -186,33 +208,24 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
             tables = extract_tables(full_text)
 
             # suggest columns that are present in more than one table
-            return [{'type': 'column', 'tables': tables, 'drop_unique': True}]
+            return (Column(tables=tables, drop_unique=True))
         elif p.token_first().value.lower() == 'select':
             # If the lparen is preceeded by a space chances are we're about to
             # do a sub-select.
-            if last_word(text_before_cursor,
-                    'all_punctuations').startswith('('):
-                return [{'type': 'keyword'}]
+            if last_word(text_before_cursor, 'all_punctuations').startswith('('):
+                return (Keyword(),)
         elif p.token_first().value.lower() == 'show':
-            return [{'type': 'show'}]
+            return (Show(),)
 
         # We're probably in a function argument list
-        return [{'type': 'column', 'tables': extract_tables(full_text)}]
+        return (Column(tables=extract_tables(full_text)))
     elif token_v in ('set', 'by', 'distinct'):
-        return [{'type': 'column', 'tables': extract_tables(full_text)}]
+        return (Column(tables=extract_tables(full_text)))
     elif token_v == 'as':
         # Don't suggest anything for an alias
-        return []
+        return tuple()
     elif token_v in ('show'):
-        return [{'type': 'show'}]
-    elif token_v in ('to',):
-        p = sqlparse.parse(text_before_cursor)[0]
-        if p.token_first().value.lower() == 'change':
-            return [{'type': 'change'}]
-        else:
-            return [{'type': 'user'}]
-    elif token_v in ('user', 'for'):
-        return [{'type': 'user'}]
+        return (Show(),)
     elif token_v in ('select', 'where', 'having'):
         # Check for a table alias or schema qualification
         parent = (identifier and identifier.get_parent_name()) or []
@@ -220,82 +233,89 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
         tables = extract_tables(full_text)
         if parent:
             tables = [t for t in tables if identifies(parent, *t)]
-            return [{'type': 'column', 'tables': tables},
-                    {'type': 'table', 'schema': parent},
-                    {'type': 'view', 'schema': parent},
-                    {'type': 'function', 'schema': parent}]
+            return (
+                Column(tables=tables),
+                Table(schema=parent),
+                View(schema=parent),
+                Function(schema=parent),
+            )
         else:
             aliases = [alias or table for (schema, table, alias) in tables]
-            return [{'type': 'column', 'tables': tables},
-                    {'type': 'function', 'schema': []},
-                    {'type': 'alias', 'aliases': aliases},
-                    {'type': 'keyword'}]
+            return (
+                Column(tables=tables),
+                Function(schema=None),
+                Alias(aliases=aliases),
+                Keyword(),
+            )
     elif (token_v.endswith('join') and token.is_keyword) or (token_v in
             ('copy', 'from', 'update', 'into', 'describe', 'truncate',
                 'desc', 'explain', 'partitions')):
-        schema = (identifier and identifier.get_parent_name()) or []
+        schema = (identifier and identifier.get_parent_name()) or None
 
         # Suggest tables from either the currently-selected schema or the
         # public schema if no schema has been specified
-        suggest = [{'type': 'table', 'schema': schema}]
+        suggest = [Table(schema=schema)]
 
         if not schema:
             # Suggest schemas
-            suggest.insert(0, {'type': 'schema'})
+            suggest.insert(0, Schema())
 
         # Only tables can be TRUNCATED, otherwise suggest views
         if token_v != 'truncate':
-            suggest.append({'type': 'view', 'schema': schema})
+            suggest.append(View(schema=schema))
 
         return suggest
 
     elif token_v in ('table', 'view', 'function'):
         # E.g. 'DROP FUNCTION <funcname>', 'ALTER TABLE <tablname>'
-        rel_type = token_v
-        schema = (identifier and identifier.get_parent_name()) or []
+        rel_type = {'table': Table, 'view': View, 'function': Function}[token_v]
+        schema = (identifier and identifier.get_parent_name()) or None
         if schema:
-            return [{'type': rel_type, 'schema': schema}]
+            return (rel_type(schema=schema))
         else:
-            return [{'type': 'schema'}, {'type': rel_type, 'schema': []}]
+            return (Schema(), rel_type(schema=schema))
+
     elif token_v == 'on':
         tables = extract_tables(full_text)  # [(schema, table, alias), ...]
-        parent = (identifier and identifier.get_parent_name()) or []
+        parent = (identifier and identifier.get_parent_name()) or None
         if parent:
             # "ON parent.<suggestion>"
             # parent can be either a schema name or table alias
-            tables = [t for t in tables if identifies(parent, *t)]
-            return [{'type': 'column', 'tables': tables},
-                    {'type': 'table', 'schema': parent},
-                    {'type': 'view', 'schema': parent},
-                    {'type': 'function', 'schema': parent}]
+            tables = tuple(t for t in tables if identifies(parent, t))
+            return (
+                Column(tables=tables),
+                Table(schema=parent),
+                View(schema=parent),
+                Function(schema=parent)
+            )
         else:
             # ON <suggestion>
             # Use table alias if there is one, otherwise the table name
-            aliases = [alias or table for (schema, table, alias) in tables]
-            suggest = [{'type': 'alias', 'aliases': aliases}]
+            aliases = tuple(alias or table for (schema, table, alias) in tables)
+            suggest = [Alias(aliases=aliases)]
 
             # The lists of 'aliases' could be empty if we're trying to complete
             # a GRANT query. eg: GRANT SELECT, INSERT ON <tab>
             # In that case we just suggest all tables.
             if not aliases:
-                suggest.append({'type': 'table', 'schema': parent})
+                suggest.append(Table(schema=parent))
             return suggest
 
     elif token_v in ('use', 'database', 'template', 'connect'):
         # "\c <db", "use <db>", "DROP DATABASE <db>",
         # "CREATE DATABASE <newdb> WITH TEMPLATE <db>"
-        return [{'type': 'database'}]
+        return (Database(),)
     elif token_v == 'tableformat':
-        return [{'type': 'table_format'}]
+        return (TableFormat(),)
     elif token_v.endswith(',') or is_operand(token_v) or token_v in ['=', 'and', 'or']:
         prev_keyword, text_before_cursor = find_prev_keyword(text_before_cursor)
         if prev_keyword:
             return suggest_based_on_last_token(
                 prev_keyword, text_before_cursor, full_text, identifier)
         else:
-            return []
+            return tuple()
     else:
-        return [{'type': 'keyword'}]
+        return (Keyword(),)
 
 
 def identifies(id, schema, table, alias):
