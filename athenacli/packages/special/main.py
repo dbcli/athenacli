@@ -98,7 +98,7 @@ def show_keyword_help(cur, arg):
     cur.execute(query)
     if cur.description and cur.rowcount > 0:
         headers = [x[0] for x in cur.description]
-        return [(None, cur, headers, '')]
+        return [(None, cur.fetchall(), headers, '')]
     else:
         return [(None, None, None, 'No help found for {0}.'.format(keyword))]
 

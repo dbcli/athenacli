@@ -325,7 +325,7 @@ def watch_query(arg, **kwargs):
                 cur.execute(sql)
                 if cur.description:
                     headers = [x[0] for x in cur.description]
-                    yield (title, cur, headers, None)
+                    yield (title, cur.fetchall(), headers, None)
                 else:
                     yield (title, None, None, None)
             sleep(seconds)
