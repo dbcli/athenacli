@@ -11,10 +11,11 @@ import click
 import sqlparse
 
 from athenacli.packages.prompt_utils import confirm_destructive_query
+from athenacli.packages.special.favoritequeries import favoritequeries
+
 from . import export
 from .main import special_command, NO_QUERY, PARSED_QUERY
 from .utils import handle_cd_command
-
 
 TIMING_ENABLED = False
 use_expanded_output = False
@@ -151,6 +152,99 @@ def open_external_editor(filename=None, sql=None):
         query = sql
 
     return (query, message)
+
+
+@special_command('\\f', '\\f [name [args..]]', 'List or execute favorite queries.', arg_type=PARSED_QUERY, case_sensitive=True)
+def execute_favorite_query(cur, arg, **_):
+    """Returns (title, rows, headers, status)"""
+    if arg == '':
+        for result in list_favorite_queries():
+            yield result
+
+    """Parse out favorite name and optional substitution parameters"""
+    name, _, arg_str = arg.partition(' ')
+    args = shlex.split(arg_str)
+
+    query = favoritequeries.get(name)
+    if query is None:
+        message = ("No favorite query: %s" % name) if name else ''
+        yield (None, None, None, message)
+    else:
+        query, arg_error = subst_favorite_query_args(query, args)
+        if arg_error:
+            yield (None, None, None, arg_error)
+        else:
+            for sql in sqlparse.split(query):
+                sql = sql.rstrip(';')
+                title = '> %s' % (sql)
+                cur.execute(sql)
+                if cur.description:
+                    headers = [x[0] for x in cur.description]
+                    yield (title, cur.fetchall(), headers, None)
+                else:
+                    yield (title, None, None, None)
+
+def list_favorite_queries():
+    """List of all favorite queries.
+    Returns (title, rows, headers, status)"""
+
+    headers = ["Name", "Query"]
+    rows = [(r, favoritequeries.get(r)) for r in favoritequeries.list()]
+
+    if not rows:
+        status = '\nNo favorite queries found.' + favoritequeries.usage
+    else:
+        status = ''
+    return [('', rows, headers, status)]
+
+
+def subst_favorite_query_args(query, args):
+    """replace positional parameters ($1...$N) in query."""
+    for idx, val in enumerate(args):
+        subst_var = '$' + str(idx + 1)
+        if subst_var not in query:
+            return [None, 'query does not have substitution parameter ' + subst_var + ':\n  ' + query]
+
+        query = query.replace(subst_var, val)
+
+    match = re.search('\\$\d+', query)
+    if match:
+        return[None, 'missing substitution for ' + match.group(0) + ' in query:\n  ' + query]
+
+    return [query, None]
+
+
+@special_command('\\fs', '\\fs name query', 'Save a favorite query.')
+def save_favorite_query(arg, **_):
+    """Save a new favorite query.
+    Returns (title, rows, headers, status)"""
+
+    usage = 'Syntax: \\fs name query.\n\n' + favoritequeries.usage
+    if not arg:
+        return [(None, None, None, usage)]
+
+    name, _, query = arg.partition(' ')
+
+    # If either name or query is missing then print the usage and complain.
+    if (not name) or (not query):
+        return [(None, None, None,
+            usage + 'Err: Both name and query are required.')]
+
+    favoritequeries.save(name, query)
+    return [(None, None, None, "Saved.")]
+
+
+@special_command('\\fd', '\\fd [name]', 'Delete a favorite query.')
+def delete_favorite_query(arg, **_):
+    """Delete an existing favorite query.
+    """
+    usage = 'Syntax: \\fd name.\n\n' + favoritequeries.usage
+    if not arg:
+        return [(None, None, None, usage)]
+
+    status = favoritequeries.delete(arg)
+
+    return [(None, None, None, status)]
 
 
 @special_command('system', 'system [command]',

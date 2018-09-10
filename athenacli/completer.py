@@ -9,11 +9,12 @@ from prompt_toolkit.completion import Completer, Completion
 
 from .packages.completion_engine import (
     suggest_type, Column, Function, Table, View, Alias, Database, Schema,
-    Keyword, Show, Special, TableFormat, FileName
+    Keyword, Show, Special, TableFormat, FileName, FavoriteQuery
 )
 from .packages.parseutils import last_word
 from .packages.filepaths import parse_path, complete_path, suggest_path
 from .packages.literals.main import get_literals
+from .packages.special.favoritequeries import favoritequeries
 
 _logger = logging.getLogger(__name__)
 
@@ -315,6 +316,9 @@ class AthenaCompleter(Completer):
     def get_file_name_matches(self, _, word_before_cursor):
         return self.find_files(word_before_cursor)
 
+    def get_favorite_query_matches(self, _, word_before_cursor):
+        return self.find_matches(word_before_cursor, favoritequeries.list())
+
     suggestion_matchers = {
        Column: get_column_matches,
        Function: get_function_matches,
@@ -328,6 +332,7 @@ class AthenaCompleter(Completer):
        Special: get_special_matches,
        TableFormat: get_table_format_matches,
        FileName: get_file_name_matches,
+       FavoriteQuery: get_favorite_query_matches,
     }
 
     def find_files(self, word):

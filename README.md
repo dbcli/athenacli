@@ -61,7 +61,7 @@ $ athenacli
 
 # Todo
 
-- [ ] support the special commands.
+- [x] support the special commands.
 - [ ] go through the config file and toggle the various config values.
 - [ ] add unit tests.
 - [ ] make it public.

@@ -42,7 +42,7 @@ Show = namedtuple('Show', [])
 Special = namedtuple('Special', [])
 TableFormat = namedtuple('TableFormat', [])
 FileName = namedtuple('FileName', [])
-NamedQuery = namedtuple('NamedQuery', [])
+FavoriteQuery = namedtuple('FavoriteQuery', [])
 
 
 def suggest_type(full_text, text_before_cursor):
@@ -135,8 +135,8 @@ def suggest_special(text):
     if cmd in ('\\T'):
         return (TableFormat(),)
 
-    if cmd in ['\\n', '\\ns', '\\nd']:
-        return (NamedQuery(),)
+    if cmd in ['\\f', '\\fs', '\\fd']:
+        return (FavoriteQuery(),)
 
     if cmd in ['\\dt', '\\dt+']:
         return (
