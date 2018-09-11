@@ -87,6 +87,7 @@ class AthenaCli(object):
 
         self.cli = None
 
+        self.query_history = []
         # Register custom special commands.
         self.register_special_commands()
 
@@ -161,6 +162,38 @@ class AthenaCli(object):
             database or _cfg['schema_name']
         )
 
+    def handle_editor_command(self, cli, document):
+        """
+        Editor command is any query that is prefixed or suffixed
+        by a '\e'. The reason for a while loop is because a user
+        might edit a query multiple times.
+        For eg:
+        "select * from \e"<enter> to edit it in vim, then come
+        back to the prompt with the edited query "select * from
+        blah where q = 'abc'\e" to edit it again.
+        :param cli: CommandLineInterface
+        :param document: Document
+        :return: Document
+        """
+        # FIXME: using application.pre_run_callables like this here is not the best solution.
+        # It's internal api of prompt_toolkit that may change. This was added to fix
+        # https://github.com/dbcli/pgcli/issues/668. We may find a better way to do it in the future.
+        saved_callables = cli.application.pre_run_callables
+        while special.editor_command(document.text):
+            filename = special.get_filename(document.text)
+            query = (special.get_editor_query(document.text) or
+                     self.get_last_query())
+            sql, message = special.open_external_editor(filename, sql=query)
+            if message:
+                # Something went wrong. Raise an exception and bail.
+                raise RuntimeError(message)
+            cli.current_buffer.document = Document(sql, cursor_position=len(sql))
+            cli.application.pre_run_callables = []
+            document = cli.run()
+            continue
+        cli.application.pre_run_callables = saved_callables
+        return document
+
     def run_query(self, query, new_line=True):
         """Runs *query*."""
         results = self.sqlexecute.run(query)
@@ -181,6 +214,16 @@ class AthenaCli(object):
 
         def one_iteration():
             document = self.cli.run()
+
+            special.set_expanded_output(False)
+            try:
+                document = self.handle_editor_command(self.cli, document)
+            except RuntimeError as e:
+                LOGGER.error("sql: %r, error: %r", document.text, e)
+                LOGGER.error("traceback: %r", traceback.format_exc())
+                self.echo(str(e), err=True, fg='red')
+                return
+
             if not document.text.strip():
                 return
 
@@ -252,6 +295,7 @@ class AthenaCli(object):
                     self.refresh_completions()
 
             query = Query(document.text, successful, mutating)
+            self.query_history.append(query)
 
         try:
             while True:
@@ -482,6 +526,10 @@ class AthenaCli(object):
         max_reserved_space = 8
         _, height = click.get_terminal_size()
         return min(int(round(height * reserved_space_ratio)), max_reserved_space)
+
+    def get_last_query(self):
+        """Get the last query executed or None."""
+        return self.query_history[-1][0] if self.query_history else None
 
 
 def need_completion_refresh(queries):
