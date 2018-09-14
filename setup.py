@@ -12,13 +12,15 @@ with open('athenacli/__init__.py', 'rb') as f:
 
 description = 'CLI for Athena Database. With auto-completion and syntax highlighting.'
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 install_requirements = [
     'click >= 4.1',
     'Pygments >= 1.6',
     'prompt_toolkit>=1.0.10,<1.1.0',
     'sqlparse>=0.2.2,<0.3.0',
     'configobj >= 5.0.5',
-    'cryptography >= 1.0.0',
     'cli_helpers[styles] >= 1.0.1',
     'PyAthena==1.2.2',
 ]
@@ -31,7 +33,9 @@ setup(
     package_data={'athenacli': ['athenaclirc',
                                 'packages/literals/literals.json']},
     description=description,
-    long_description=description,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/dbcli/athenacli",
     install_requires=install_requirements,
     entry_points={
         'console_scripts': ['athenacli = athenacli.main:cli'],
