@@ -77,7 +77,7 @@ class AthenaCli(object):
         self.prompt = _cfg['main']['prompt'] or self.DEFAULT_PROMPT
         self.destructive_warning = _cfg['main']['destructive_warning']
         self.syntax_style = _cfg['main']['syntax_style']
-        self.prompt_continuation_format = c['main']['prompt_continuation']
+        self.prompt_continuation_format = _cfg['main']['prompt_continuation']
 
         self.formatter = TabularOutputFormatter(_cfg['main']['table_format'])
         self.formatter.cli = self
@@ -175,14 +175,18 @@ class AthenaCli(object):
         return [(None, None, None, "Changed prompt format to %s" % arg)]
 
     def connect(self, region, database):
-        _cfg = self.config['main']
         self.sqlexecute = SQLExecute(
-            _cfg['aws_access_key_id'],
-            _cfg['aws_secret_access_key'],
-            region or _cfg['region_name'],
-            _cfg['s3_staging_dir'],
-            database or _cfg['schema_name']
+            self.get_required_val('aws_access_key_id'),
+            self.get_required_val('aws_secret_access_key'),
+            region or self.get_required_val('region_name'),
+            self.get_required_val('s3_staging_dir'),
+            database or self.get_required_val('schema_name')
         )
+
+    def get_required_val(self, name):
+        _cfg = self.config['main']
+        assert _cfg[name], '[%s] is empty, please check your config file.' % name
+        return _cfg[name]
 
     def handle_editor_command(self, cli, document):
         """
@@ -561,6 +565,7 @@ class AthenaCli(object):
 
     def get_prompt(self, string):
         sqlexecute = self.sqlexecute
+        now = datetime.now()
         string = string.replace('\\r', sqlexecute.region_name or '(none)')
         string = string.replace('\\d', sqlexecute.database or '(none)')
         string = string.replace('\\n', "\n")

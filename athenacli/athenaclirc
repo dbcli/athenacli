@@ -7,10 +7,12 @@ aws_secret_access_key = ''
 
 # Athena connection info
 region_name = 'us-west-2'
+# Schema/database name
 schema_name = 'default'
 
 # Amazon S3 staging directory where query results are stored
-# NOTE: S3 location should be in the same region.
+# NOTE: S3 should in the same region as specified above.
+# The format is 's3://<your s3 directory path>'
 s3_staging_dir = ''
 
 # log_file location.
