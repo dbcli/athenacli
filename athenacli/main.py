@@ -76,12 +76,13 @@ class AthenaCli(object):
         self.key_bindings = _cfg['main']['key_bindings']
         self.prompt = _cfg['main']['prompt'] or self.DEFAULT_PROMPT
         self.destructive_warning = _cfg['main']['destructive_warning']
+        self.syntax_style = _cfg['main']['syntax_style']
 
         self.formatter = TabularOutputFormatter(_cfg['main']['table_format'])
         self.formatter.cli = self
         sql_format.register_new_formatter(self.formatter)
 
-        self.output_style = style_factory('default', {})
+        self.output_style = style_factory(self.syntax_style, {})
 
         self.completer = AthenaCompleter()
         self._completer_lock = threading.Lock()
