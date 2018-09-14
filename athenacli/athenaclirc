@@ -25,9 +25,17 @@ history_file = '~/.athenacli/history'
 # lines. End of line (return) is considered as the end of the statement.
 multi_line = True
 
+# Destructive warning mode will alert you before executing a sql statement
+# that may cause harm to the database such as "drop table", "drop database"
+# or "shutdown".
+destructive_warning = True
+
 # Default log level. Possible values: "CRITICAL", "ERROR", "WARNING", "INFO"
 # and "DEBUG". "NONE" disables logging.
 log_level = INFO
+
+# Timing of sql statments and table rendering.
+timing = True
 
 # Table format. Possible values: ascii, double, github,
 # psql, plain, simple, grid, fancy_grid, pipe, orgtbl, rst, mediawiki, html,
@@ -44,3 +52,6 @@ key_bindings = emacs
 # \d - Database name
 # \r - Region
 prompt = '\r:\d> '
+
+# Favorite queries.
+[favorite_queries]

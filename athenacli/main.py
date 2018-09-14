@@ -71,9 +71,11 @@ class AthenaCli(object):
 
         self.connect(region, database)
 
+        special.set_timing_enabled(_cfg['main'].as_bool('timing'))
         self.multi_line = _cfg['main'].as_bool('multi_line')
         self.key_bindings = _cfg['main']['key_bindings']
         self.prompt = _cfg['main']['prompt'] or self.DEFAULT_PROMPT
+        self.destructive_warning = _cfg['main']['destructive_warning']
 
         self.formatter = TabularOutputFormatter(_cfg['main']['table_format'])
         self.formatter.cli = self
@@ -196,6 +198,12 @@ class AthenaCli(object):
 
     def run_query(self, query, new_line=True):
         """Runs *query*."""
+        if (self.destructive_warning and
+                confirm_destructive_query(query) is False):
+            message = 'Wise choice. Command execution stopped.'
+            click.echo(message)
+            return
+
         results = self.sqlexecute.run(query)
         for result in results:
             title, rows, headers, _ = result
@@ -206,6 +214,7 @@ class AthenaCli(object):
 
     def run_cli(self):
         self.iterations = 0
+        self.configure_pager()
         self.refresh_completions()
 
         history_file = os.path.expanduser(self.config['main']['history_file'])
@@ -227,7 +236,16 @@ class AthenaCli(object):
             if not document.text.strip():
                 return
 
-            special.set_expanded_output(False)
+            if self.destructive_warning:
+                destroy = confirm_destructive_query(document.text)
+                if destroy is None:
+                    pass  # Query was not destructive. Nothing to do here.
+                elif destroy is True:
+                    self.echo('Your call!')
+                else:
+                    self.echo('Wise choice!')
+                    return
+
             mutating = False
 
             try:
@@ -329,7 +347,7 @@ class AthenaCli(object):
 
             fits = True
             buf = []
-            output_via_pager = False
+            output_via_pager = self.explicit_pager and special.is_pager_enabled()
             for i, line in enumerate(output, 1):
                 special.write_tee(line)
                 special.write_once(line)
@@ -339,6 +357,10 @@ class AthenaCli(object):
                     buf.append(line)
                     if len(line) > size.columns or i > (size.rows - margin):
                         fits = False
+                        if not self.explicit_pager and special.is_pager_enabled():
+                            # doesn't fit, use pager
+                            output_via_pager = True
+
                         if not output_via_pager:
                             # doesn't fit, flush buffer
                             for line in buf:
@@ -357,6 +379,9 @@ class AthenaCli(object):
 
         if status:
             click.secho(status)
+
+    def configure_pager(self):
+        self.explicit_pager = False
 
     def format_output(self, title, cur, headers, expanded=False,
                       max_width=None):
