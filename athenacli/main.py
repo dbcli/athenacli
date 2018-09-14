@@ -130,10 +130,28 @@ class AthenaCli(object):
         pgspecial_logger.setLevel(log_level)
 
     def register_special_commands(self):
-        special.register_special_command(self.change_db, 'use',
-                '\\u', 'Change to a new database.', aliases=('\\u',))
-        special.register_special_command(self.change_prompt_format, 'prompt',
-                '\\R', 'Change prompt format.', aliases=('\\R',), case_sensitive=True)
+        special.register_special_command(
+            self.change_db, 'use', '\\u',
+            'Change to a new database.', aliases=('\\u',))
+        special.register_special_command(
+            self.change_prompt_format, 'prompt', '\\R',
+            'Change prompt format.', aliases=('\\R',), case_sensitive=True)
+        special.register_special_command(
+            self.change_table_format, 'tableformat', '\\T',
+            'Change the table format used to output results.',
+            aliases=('\\T',), case_sensitive=True)
+
+    def change_table_format(self, arg, **_):
+        try:
+            self.formatter.format_name = arg
+            yield (None, None, None,
+                   'Changed table format to {}'.format(arg))
+        except ValueError:
+            msg = 'Table format {} not recognized. Allowed formats:'.format(
+                arg)
+            for table_type in self.formatter.supported_formats:
+                msg += "\n\t{}".format(table_type)
+            yield (None, None, None, msg)
 
     def change_db(self, arg, **_):
         if arg is None:
