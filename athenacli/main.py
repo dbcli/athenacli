@@ -77,6 +77,7 @@ class AthenaCli(object):
         self.prompt = _cfg['main']['prompt'] or self.DEFAULT_PROMPT
         self.destructive_warning = _cfg['main']['destructive_warning']
         self.syntax_style = _cfg['main']['syntax_style']
+        self.prompt_continuation_format = c['main']['prompt_continuation']
 
         self.formatter = TabularOutputFormatter(_cfg['main']['table_format'])
         self.formatter.cli = self
@@ -499,7 +500,7 @@ class AthenaCli(object):
             return [(Token.Prompt, prompt)]
 
         def get_continuation_tokens(cli, width):
-            prompt = self.get_prompt('|>')
+            prompt = self.get_prompt(self.prompt_continuation_format)
             token = (
                 Token.Continuation,
                 ' ' * (width - len(prompt)) + prompt
@@ -562,6 +563,12 @@ class AthenaCli(object):
         sqlexecute = self.sqlexecute
         string = string.replace('\\r', sqlexecute.region_name or '(none)')
         string = string.replace('\\d', sqlexecute.database or '(none)')
+        string = string.replace('\\n', "\n")
+        string = string.replace('\\D', now.strftime('%a %b %d %H:%M:%S %Y'))
+        string = string.replace('\\m', now.strftime('%M'))
+        string = string.replace('\\P', now.strftime('%p'))
+        string = string.replace('\\R', now.strftime('%H'))
+        string = string.replace('\\s', now.strftime('%S'))
         return string
 
     def get_reserved_space(self):

@@ -58,7 +58,14 @@ key_bindings = emacs
 # Athena prompt
 # \d - Database name
 # \r - Region
+# \D - The full current date
+# \m - Minutes of the current time
+# \n - Newline
+# \P - AM/PM
+# \R - The current time, in 24-hour military time (0–23)
+# \s - Seconds of the current time
 prompt = '\r:\d> '
+prompt_continuation = '-> '
 
 # Favorite queries.
 [favorite_queries]
