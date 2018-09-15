@@ -167,7 +167,7 @@ def execute_favorite_query(cur, arg, **_):
 
     query = favoritequeries.get(name)
     if query is None:
-        message = ("No favorite query: %s" % name) if name else ''
+        message = "No favorite query: %s" % (name)
         yield (None, None, None, message)
     else:
         query, arg_error = subst_favorite_query_args(query, args)
@@ -175,6 +175,7 @@ def execute_favorite_query(cur, arg, **_):
             yield (None, None, None, arg_error)
         else:
             for sql in sqlparse.split(query):
+                _logger.debug("query is [%s]", sql)
                 sql = sql.rstrip(';')
                 title = '> %s' % (sql)
                 cur.execute(sql)

@@ -24,8 +24,8 @@ def _multiline_exception(text):
     # Multi-statement favorite query is a special case. Because there will
     # be a semicolon separating statements, we can't consider semicolon an
     # EOL. Let's consider an empty line an EOL instead.
-    if text.startswith('\\fs'):
-        return orig.endswith('\n')
+    # if text.startswith('\\fs'):
+    #     return orig.endswith('\n')
 
     return (text.startswith('\\') or   # Special Command
             text.endswith(';') or      # Ended with a semi-colon

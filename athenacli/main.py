@@ -63,13 +63,15 @@ class AthenaCli(object):
     DEFAULT_PROMPT = '\\d@\\r> '
     MAX_LEN_PROMPT = 45
 
-    def __init__(self, region=None, database=None):
-        config_files = (DEFAULT_CONFIG_FILE, ATHENACLIRC)
+    def __init__(self, region=None, aws_access_key_id=None, aws_secret_access_key=None,
+        s3_staging_dir=None, athenaclirc=None, database=None):
+
+        config_files = (DEFAULT_CONFIG_FILE, athenaclirc)
         _cfg = self.config = read_config_files(config_files)
 
         self.init_logging(_cfg['main']['log_file'], _cfg['main']['log_level'])
 
-        self.connect(region, database)
+        self.connect(aws_access_key_id, aws_secret_access_key, s3_staging_dir, region, database)
 
         special.set_timing_enabled(_cfg['main'].as_bool('timing'))
         self.multi_line = _cfg['main'].as_bool('multi_line')
@@ -174,12 +176,12 @@ class AthenaCli(object):
         self.prompt = self.get_prompt(arg)
         return [(None, None, None, "Changed prompt format to %s" % arg)]
 
-    def connect(self, region, database):
+    def connect(self, aws_access_key_id, aws_secret_access_key, s3_staging_dir, region, database):
         self.sqlexecute = SQLExecute(
-            self.get_required_val('aws_access_key_id'),
-            self.get_required_val('aws_secret_access_key'),
+            aws_access_key_id or self.get_required_val('aws_access_key_id'),
+            aws_secret_access_key or self.get_required_val('aws_secret_access_key'),
             region or self.get_required_val('region_name'),
-            self.get_required_val('s3_staging_dir'),
+            s3_staging_dir or self.get_required_val('s3_staging_dir'),
             database or self.get_required_val('schema_name')
         )
 
@@ -616,9 +618,15 @@ def is_mutating(status):
     return status.split(None, 1)[0].lower() in mutating
 
 @click.command()
-@click.option('-e', '--execute', type=str, help='Execut command (or a file) and quit.')
+@click.option('-e', '--execute', type=str, help='Execute a command (or a file) and quit.')
+@click.option('-r', '--region', type=str, help="AWS region.")
+@click.option('--aws-access-key-id', type=str, help="AWS access key id.")
+@click.option('--aws-secret-access-key', type=str, help="AWS secretaccess key.")
+@click.option('--s3-staging-dir', type=str, help="Amazon S3 staging directory where query results are stored.")
+@click.option('--athenaclirc', default=ATHENACLIRC, type=click.Path(dir_okay=False), help="Location of athenaclirc file.")
 @click.argument('database', default='', nargs=1)
-def cli(execute, database):
+def cli(execute, region, aws_access_key_id, aws_secret_access_key,
+        s3_staging_dir, athenaclirc, database):
     '''A Athena terminal client with auto-completion and syntax highlighting.
 
     \b
@@ -626,7 +634,7 @@ def cli(execute, database):
       - athenacli
       - athenacli my_database
     '''
-    if not os.path.exists(os.path.expanduser(ATHENACLIRC)):
+    if (athenaclirc == ATHENACLIRC) and (not os.path.exists(os.path.expanduser(ATHENACLIRC))):
         err_msg = '''
         Welcome to athenacli!
 
@@ -639,7 +647,14 @@ def cli(execute, database):
         write_default_config(DEFAULT_CONFIG_FILE, ATHENACLIRC)
         sys.exit(1)
 
-    athenacli = AthenaCli(database=database)
+    athenacli = AthenaCli(
+        region=region,
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key= aws_secret_access_key,
+        s3_staging_dir=s3_staging_dir,
+        athenaclirc=athenaclirc,
+        database=database
+    )
 
     #  --execute argument
     if execute:
