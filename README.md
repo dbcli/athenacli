@@ -12,19 +12,19 @@ AthenaCLI is a command line client for [Athena](https://aws.amazon.com/athena/) 
 
 # Quick Start
 
-Please refer to the [Quick Start]() in the online documentation on how to get started using it quickly.
+Please refer to the [Quick Start](https://athenacli.readthedocs.io/en/latest/index.html#quick-start) in the online documentation on how to get started using it quickly.
 
 # Features
 
-Please review the [Features]() for information on what does AthenaCLI provide.
+Please review the [Features](https://athenacli.readthedocs.io/en/latest/features.html) for information on what does AthenaCLI provide.
 
 # Usages
 
-Please go to the [Usages]() for detailed information on how to use AthenaCLI.
+Please go to the [Usages](https://athenacli.readthedocs.io/en/latest/usage.html) for detailed information on how to use AthenaCLI.
 
 # FAQs
 
-Please refer to the [FAQs]() for other information, e.g. "How can I get support for athenacli?".
+Please refer to the [FAQs](https://athenacli.readthedocs.io/en/latest/faq.html) for other information, e.g. "How can I get support for athenacli?".
 
 # Credits
 
