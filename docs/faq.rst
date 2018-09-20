@@ -4,7 +4,7 @@ FAQs
 How can I get support for athenacli?
 ---------------------------------------
 
-There is Gitter chat. We also track our bugs and feature requests in Github Issues for this project.
+There is `Gitter chat<https://gitter.im/dbcli/athenacli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge>`_. We also track our bugs and feature requests in Github Issues for this project.
 
 I found a bug, what do I do?
 ---------------------------------------

@@ -8,20 +8,54 @@ Options
 .. code-block:: bash
 
     $ athenacli --help
+    Usage: main.py [OPTIONS] [DATABASE]
+
+    A Athena terminal client with auto-completion and syntax highlighting.
+
+    Examples:
+        - athenacli
+        - athenacli my_database
+
+    Options:
+    -e, --execute TEXT            Execute a command (or a file) and quit.
+    -r, --region TEXT             AWS region.
+    --aws-access-key-id TEXT      AWS access key id.
+    --aws-secret-access-key TEXT  AWS secretaccess key.
+    --s3-staging-dir TEXT         Amazon S3 staging directory where query
+                                    results are stored.
+    --athenaclirc PATH            Location of athenaclirc file.
+    --help                        Show this message and exit.
 
 Connect to a database
 ------------------------
 
-Connect a specific database with aws credentials and S3 staging directory. -S -d and -U are optional. You can set those variables in `athenaclirc` config file.
+Connect a specific database with AWS credentials, region name and S3 staging directory. AWS credentials, region name and S3 staging directory are optional. You can set those variables in `athenaclirc` config file, and then run below command.
+
+    $ athenacli ddbtablestats
 
 Exit athenacli
 ------------------
 
-Toggle multi-line mode
--------------------------
+Press `ctrl+d` or type `quit` or `exit`.
 
 Special Commands
 --------------------
 
+Save 'SELECT user_id, tweet_id from twitterfeed LIMIT 2' as a favorite query called 'q1':
+
+    $ \fs q1 SELECT user_id, tweet_id from twitterfeed LIMIT 2
+
+Run the named query:
+
+    $ \f q1
+
 Execute a command (or a file)
 ---------------------------------
+
+Execute a command and quit:
+
+    $ athenacli -e 'show databases'
+
+Execute a file and quit:
+
+    $ athenacli -e examples/create_table.sql
