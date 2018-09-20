@@ -21,7 +21,7 @@ Config
 
 A config file is automatically created at ~/.athenacli/athenaclirc at first launch (run `athenacli`). See the file itself for a description of all available options.
 
-Below 3 variables are required.
+Below 4 variables are required.
 
 .. code-block:: text
 
@@ -29,7 +29,12 @@ Below 3 variables are required.
     aws_access_key_id = ''
     aws_secret_access_key = ''
 
-    # Amazon S3 staging directory where query results will be stored.
+    # AWS region
+    region_name = 'us-west-2'
+
+    # Amazon S3 staging directory where query results are stored.
+    # NOTE: S3 should in the same region as specified above.
+    # The format is 's3://<your s3 directory path>'
     s3_staging_dir = ''
 
 Create a table

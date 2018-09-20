@@ -2,11 +2,11 @@ Project Lead:
 -------------
   * Zhaolong Zhu
 
-
 Core Developers:
 ----------------
-  * Zhaolong Zhu
   * Amjith Ramanujam
+  * Irina Truong
+  * Zhaolong Zhu
 
 Contributors:
 -------------
