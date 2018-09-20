@@ -30,8 +30,12 @@ setup(
     author='athenacli Core Team',
     version=version,
     packages=find_packages(),
-    package_data={'athenacli': ['athenaclirc',
-                                'packages/literals/literals.json']},
+    package_data={
+        'athenacli': [
+            'athenaclirc',
+            'packages/literals/literals.json'
+        ]
+    },
     description=description,
     long_description=long_description,
     long_description_content_type="text/markdown",
