@@ -39,11 +39,11 @@ class AthenaCompleter(Completer):
         self.keyword_casing = keyword_casing
         self.reset_completions()
 
-    def escape_name(self, name):
+    def escape_name(self, name, char='`'):
         if name and ((not self.name_pattern.match(name))
                 or (name.upper() in self.reserved_words)
                 or (name.upper() in self.functions)):
-                    name = '`%s`' % name
+                    name = '%s%s%s' % (char, name, char)
 
         return name
 
@@ -54,8 +54,8 @@ class AthenaCompleter(Completer):
 
         return name
 
-    def escaped_names(self, names):
-        return [self.escape_name(name) for name in names]
+    def escaped_names(self, names, char='`'):
+        return [self.escape_name(name, char) for name in names]
 
     def extend_special_commands(self, special_commands):
         # Special commands are not part of all_completions since they can only
@@ -117,7 +117,7 @@ class AthenaCompleter(Completer):
         # without specifying a database name. This exception must be handled to
         # prevent crashing.
         try:
-            column_data = [self.escaped_names(d) for d in column_data]
+            column_data = [self.escaped_names(d, '"') for d in column_data]
         except Exception:
             column_data = []
 
@@ -132,7 +132,7 @@ class AthenaCompleter(Completer):
         # without specifying a database name. This exception must be handled to
         # prevent crashing.
         try:
-            func_data = [self.escaped_names(d) for d in func_data]
+            func_data = [self.escaped_names(d, '"') for d in func_data]
         except Exception:
             func_data = []
 
