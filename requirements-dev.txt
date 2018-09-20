@@ -1,0 +1,4 @@
+mock
+pytest!=3.3.0
+tox
+twine==1.10.0
