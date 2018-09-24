@@ -28,6 +28,7 @@ install_requirements = [
 setup(
     name='athenacli',
     author='athenacli Core Team',
+    author_email="athenacli@googlegroups.com",
     version=version,
     packages=find_packages(),
     package_data={
