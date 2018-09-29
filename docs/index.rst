@@ -14,7 +14,11 @@ Quick Start
 Install
 -------------
 
+.. code-block:: bash
+
     $ pip install athenacli
+
+You can refer to :doc:`../install` page for more options.
 
 Config
 ------------
@@ -40,15 +44,21 @@ Below 4 variables are required.
 Create a table
 ---------------
 
+.. code-block:: bash
+
     $ athenacli -e examples/create_table.sql
 
 Run a query
 --------------
 
+.. code-block:: bash
+
     $ athenacli -e 'select elb_name, request_ip from elb_logs LIMIT 10'
 
 REPL
 -------------
+
+.. code-block:: bash
 
     $ athenacli [<database_name>]
 
@@ -59,5 +69,6 @@ Table of Contents
 .. toctree::
 
    features
+   install
    usage
    faq

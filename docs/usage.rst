@@ -31,6 +31,8 @@ Connect to a database
 
 Connect a specific database with AWS credentials, region name and S3 staging directory. AWS credentials, region name and S3 staging directory are optional. You can set those variables in `athenaclirc` config file, and then run below command.
 
+.. code-block:: bash
+
     $ athenacli ddbtablestats
 
 Exit athenacli
@@ -43,19 +45,27 @@ Special Commands
 
 Save 'SELECT user_id, tweet_id from twitterfeed LIMIT 2' as a favorite query called 'q1':
 
-    $ \fs q1 SELECT user_id, tweet_id from twitterfeed LIMIT 2
+.. code-block:: bash
+
+    > \fs q1 SELECT user_id, tweet_id from twitterfeed LIMIT 2
 
 Run the named query:
 
-    $ \f q1
+.. code-block:: bash
+
+    > \f q1
 
 Execute a command (or a file)
 ---------------------------------
 
 Execute a command and quit:
 
+.. code-block:: bash
+
     $ athenacli -e 'show databases'
 
 Execute a file and quit:
+
+.. code-block:: bash
 
     $ athenacli -e examples/create_table.sql
