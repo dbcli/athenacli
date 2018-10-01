@@ -48,6 +48,8 @@ Create a table
 
     $ athenacli -e examples/create_table.sql
 
+You can find `examples/create_table.sql` `here <https://github.com/dbcli/athenacli/blob/master/examples/create_table.sql>`_.
+
 Run a query
 --------------
 
