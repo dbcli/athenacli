@@ -10,6 +10,7 @@ Core Developers:
 
 Contributors:
 -------------
+  * Joe Block
 
 Creator:
 --------
