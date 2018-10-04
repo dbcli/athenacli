@@ -4,7 +4,7 @@
 
 # Introduction
 
-AthenaCLI is a command line client for [Athena](https://aws.amazon.com/athena/) service that can do auto-completion and syntax highlighting, and is a proud member of the dbcli community.
+AthenaCLI is a command line client for the [Athena](https://aws.amazon.com/athena/) service that can do auto-completion and syntax highlighting, and is a proud member of the dbcli community.
 
 ![](./docs/_static/gif/athenacli.gif)
 
@@ -14,7 +14,7 @@ Please refer to the [Quick Start](https://athenacli.readthedocs.io/en/latest/ind
 
 # Features
 
-Please review the [Features](https://athenacli.readthedocs.io/en/latest/features.html) for information on what does AthenaCLI provide.
+Please review the [Features](https://athenacli.readthedocs.io/en/latest/features.html) for information on what AthenaCLI provides.
 
 # Usages
 
@@ -28,7 +28,7 @@ Please refer to the [FAQs](https://athenacli.readthedocs.io/en/latest/faq.html) 
 
 A special thanks to [Amjith Ramanujam](https://github.com/amjith) for creating pgcli and mycli, which inspired me to create this AthenaCLI, and AthenaCLI is created based on a clone of mycli.
 
-Thanks to [Jonathan Slenders](https://github.com/jonathanslenders) for creating Python Prompt Toolkit, which leads me to pgcli and mycli. It's a lot of fun playing with this library.
+Thanks to [Jonathan Slenders](https://github.com/jonathanslenders) for creating the [Python Prompt Toolkit](https://github.com/jonathanslenders/python-prompt-toolkit), which leads me to pgcli and mycli. It's a lot of fun playing with this library.
 
 Thanks to [PyAthena](https://github.com/laughingman7743/PyAthena) for a pure python adapter to Athena database.
 
