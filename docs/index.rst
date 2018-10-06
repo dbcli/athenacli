@@ -29,12 +29,11 @@ Below 4 variables are required.
 
 .. code-block:: text
 
-    # AWS credentials
+    # If you are a user of aws cli, you might want to resue some configurations of aws cli,
+    # please refer to https://athenacli.readthedocs.io/en/latest/awsconfig.html for more infomation.
     aws_access_key_id = ''
     aws_secret_access_key = ''
-
-    # AWS region
-    region_name = 'us-west-2'
+    region = '' # e.g us-west-2, us-east-1
 
     # Amazon S3 staging directory where query results are stored.
     # NOTE: S3 should in the same region as specified above.
@@ -72,5 +71,6 @@ Table of Contents
 
    features
    install
+   awsconfig
    usage
    faq
