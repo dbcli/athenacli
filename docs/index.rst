@@ -29,7 +29,7 @@ Below 4 variables are required.
 
 .. code-block:: text
 
-    # If you are a user of aws cli, you might want to resue some configurations of aws cli,
+    # If you are a user of aws cli, you might want to use some configurations of aws cli,
     # please refer to https://athenacli.readthedocs.io/en/latest/awsconfig.html for more infomation.
     aws_access_key_id = ''
     aws_secret_access_key = ''

@@ -1,6 +1,6 @@
 
 [aws_profile default]
-# If you are a user of aws cli, you might want to reuse some configurations of aws cli,
+# If you are a user of aws cli, you might want to use some configurations of aws cli,
 # please refer to https://athenacli.readthedocs.io/en/latest/awsconfig.html for more infomation.
 aws_access_key_id = ''
 aws_secret_access_key = ''
