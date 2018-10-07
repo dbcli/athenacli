@@ -1,7 +1,7 @@
 AthenaCLI
 ==========
 
-AthenaCLI is a command line client for `Athena <https://aws.amazon.com/athena/>`_ service that can do auto-completion and syntax highlighting, and is a proud member of the dbcli community.
+AthenaCLI is a command line interface (CLI) for `Athena <https://aws.amazon.com/athena/>`_ service that can do auto-completion and syntax highlighting, and is a proud member of the dbcli community.
 
 .. figure:: _static/gif/athenacli.gif
     :align: center
