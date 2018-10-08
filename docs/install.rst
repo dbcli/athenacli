@@ -8,7 +8,7 @@ If you already know how to install python packages, then you can do:
 
 .. code-block:: bash
 
-    $ pip install pgcli
+    $ pip install athenacli
 
 You might need sudo, or you can install it in a virtualenv.
 
