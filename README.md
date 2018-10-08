@@ -33,3 +33,8 @@ Thanks to [Jonathan Slenders](https://github.com/jonathanslenders) for creating 
 Thanks to [PyAthena](https://github.com/laughingman7743/PyAthena) for a pure python adapter to Athena database.
 
 Last but not least, thanks my team and manager encourage me to work on this hobby project.
+
+# Similar projects
+
+- [guardian/athena-cli](https://github.com/guardian/athena-cli): Presto-like CLI tool for AWS Athena.
+- [pengwynn/athena-cli](https://github.com/pengwynn/athena-cli): CLI for Amazon Athena, powered by JRuby.
