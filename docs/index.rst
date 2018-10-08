@@ -73,4 +73,5 @@ Table of Contents
    install
    awsconfig
    usage
+   develop
    faq

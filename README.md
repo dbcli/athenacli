@@ -20,6 +20,12 @@ Please review the [Features](https://athenacli.readthedocs.io/en/latest/features
 
 Please go to the [Usages](https://athenacli.readthedocs.io/en/latest/usage.html) for detailed information on how to use AthenaCLI.
 
+# Contributions
+
+If you're interested in contributing to this project, first of all I would like to extend my heartfelt gratitude. I've written [a small doc](https://athenacli.readthedocs.io/en/latest/develop.html) to describe how to get this running in a development setup.
+
+Please feel free to reach out to me if you need help. My email: zhuzhaolong0 AT gmail com
+
 # FAQs
 
 Please refer to the [FAQs](https://athenacli.readthedocs.io/en/latest/faq.html) for other information, e.g. "How can I get support for athenacli?".
