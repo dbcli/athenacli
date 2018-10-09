@@ -74,6 +74,18 @@ class AthenaCli(object):
         aws_config = AWSConfig(
             aws_access_key_id, aws_secret_access_key, region, s3_staging_dir, profile, _cfg
         )
+
+        if (not aws_config.aws_access_key_id
+                or not aws_config.aws_secret_access_key
+                or not aws_config.region
+                or not aws_config.s3_staging_dir):
+            err_msg = '''
+            Looks like some of the AWS configuration is missing/incomplete.
+            Please fix the configuration in %s and run athenacli again.
+            ''' % ATHENACLIRC
+            print(err_msg)
+            sys.exit(1)
+
         self.connect(aws_config, database)
 
         special.set_timing_enabled(_cfg['main'].as_bool('timing'))
