@@ -88,7 +88,7 @@ class AthenaCli(object):
         self.formatter.cli = self
         sql_format.register_new_formatter(self.formatter)
 
-        self.output_style = style_factory(self.syntax_style, {})
+        self.output_style = style_factory(self.syntax_style, _cfg['colors'])
 
         self.completer = AthenaCompleter()
         self._completer_lock = threading.Lock()
