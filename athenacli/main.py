@@ -407,6 +407,9 @@ class AthenaCli(object):
     def configure_pager(self):
         self.explicit_pager = False
 
+        if not self.config['main'].as_bool('enable_pager'):
+            special.disable_pager()
+
     def format_output(self, title, cur, headers, expanded=False,
                       max_width=None):
         expanded = expanded or self.formatter.format_name == 'vertical'

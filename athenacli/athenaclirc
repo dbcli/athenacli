@@ -66,6 +66,9 @@ key_bindings = emacs
 prompt = '\r:\d> '
 prompt_continuation = '-> '
 
+# enable pager on startup
+enable_pager = True
+
 # Custom colors for the completion menu, toolbar, etc.
 [colors]
 # Completion menus.
