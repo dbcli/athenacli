@@ -74,7 +74,19 @@ class AthenaCli(object):
         aws_config = AWSConfig(
             aws_access_key_id, aws_secret_access_key, region, s3_staging_dir, profile, _cfg
         )
-        self.connect(aws_config, database)
+
+        try:
+            self.connect(aws_config, database)
+        except Exception as e:
+            err_msg = '''
+            There was an error while connecting to AWS Athena. It could be caused due to missing/incomplete configuration.
+            Please verify the configuration in %s and run athenacli again.
+
+            For details about the error, you can check the log file at the location specified in the above config under log_file.
+            ''' % ATHENACLIRC
+            print(err_msg)
+            LOGGER.exception('error: %r', e)
+            sys.exit(1)
 
         special.set_timing_enabled(_cfg['main'].as_bool('timing'))
         self.multi_line = _cfg['main'].as_bool('multi_line')
