@@ -8,7 +8,7 @@ AthenaCLI is a command line interface (CLI) for the [Athena](https://aws.amazon.
 
 ![](./docs/_static/gif/athenacli.gif)
 
-# [Quick Start](https://athenacli.readthedocs.io/en/latest/index.html#quick-start)
+# Quick Start
 
 ## Install
 
@@ -36,6 +36,15 @@ region = '' # e.g us-west-2, us-east-1
 # NOTE: S3 should in the same region as specified above.
 # The format is 's3://<your s3 directory path>'
 s3_staging_dir = ''
+```
+
+or you can also use environment variables:
+
+``` bash
+$ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
+$ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+$ export AWS_DEFAULT_REGION=us-west-2
+$ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
 ```
 
 ## Create a table
