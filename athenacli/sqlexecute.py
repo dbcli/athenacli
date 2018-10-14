@@ -36,11 +36,12 @@ class SQLExecute(object):
 
     def connect(self, database=None):
         conn = pyathena.connect(
-            aws_access_key_id = self.aws_access_key_id,
-            aws_secret_access_key = self.aws_secret_access_key,
-            region_name = self.region_name,
-            s3_staging_dir = self.s3_staging_dir,
-            schema_name = database or self.database
+            aws_access_key_id=self.aws_access_key_id,
+            aws_secret_access_key=self.aws_secret_access_key,
+            region_name=self.region_name,
+            s3_staging_dir=self.s3_staging_dir,
+            schema_name=database or self.database,
+            poll_interval=0.2 # 200ms
         )
         self.database = database or self.database
 
