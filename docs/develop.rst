@@ -18,33 +18,26 @@ Local setup
 
 The installation instructions in the README file are intended for users of athenacli. If you're developing athenacli, you'll need to install it in a slightly different way so you can see the effects of your changes right away without having to go through the install cycle everytime you change the code.
 
-It is highly recommended to use virtualenv for development. If you don't know what a virtualenv is, `this guide <https://docs.python-guide.org/dev/virtualenvs/#virtual-environments>`_ will help you get started.
+It is highly recommended to use pipenv for development. If you don't know what a pipenv is, `this guide <https://docs.python-guide.org/dev/virtualenvs/#virtual-environments>`_ will help you get started.
 
-Create a virtualenv (let's call it athenacli-dev). Activate it:
-
-.. code-block:: bash
-
-    $ source ./athenacli-dev/bin/activate
-
-Once the virtualenv is activated, cd into the local clone of athenacli folder and install athenacli using pip as follows:
+Suppose you have pipenv installed correctly and the current directory is in your local copy of athenacli, here are some useful commands:
 
 .. code-block:: bash
-
-    $ pip install -e .
-
-This will install the necessary dependencies as well as install athenacli from the working folder into the virtualenv. By installing it using `pip install -e` we've linked the athenacli installation with the working copy. So any changes made to the code is immediately available in the installed version of athenacli. This makes it easy to change something in the code, launch athenacli and check the effects of your change.
-
+    $ # install necessary dependences for both production and development
+    $ pipenv install --dev 
+    $ # active virtual environment
+    $ pipenv shell
+    $ # deactive virtual environment
+    $ deactive
+    $ # remove virtual environment for this project
+    $ pipenv --rm
 
 Running the tests
 ------------------
 
 Currently we don't have enough tests for athenacli, because we haven't found an easy way to test AWS Athena locally, we have an `issue <https://github.com/dbcli/athenacli/issues/13>`_ track this problem. But we do have some unit tests for other parts, below are the steps to run them.
 
-First, install the requirements for testing:
-
-.. code-block:: bash
-
-    $ pip install -r requirements-dev.txt
+Make sure you have installed development dependences via `pipenv install --dev` and actived your virtual environment.
 
 After that, tests can be run with:
 

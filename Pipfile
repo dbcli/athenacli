@@ -1,0 +1,16 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+athenacli = {editable = true, path = "."}
+
+[dev-packages]
+mock = "*"
+pytest = "!=3.3.0"
+tox = "*"
+twine = "==1.10.0"
+sphinx = "*"
+
+[requires]
