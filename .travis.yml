@@ -6,11 +6,12 @@ python:
   - "3.6"
 
 install:
-  - pip install -r requirements-dev.txt
-  - pip install -e .
+  - pip install pipenv
+  - pipenv install --dev
+
 
 script:
-  - pytest test
+  - pipenv run pytest test
 
 notifications:
   webhooks:
