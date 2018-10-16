@@ -20,17 +20,18 @@ The installation instructions in the README file are intended for users of athen
 
 It is highly recommended to use pipenv for development. If you don't know what a pipenv is, `this guide <https://docs.python-guide.org/dev/virtualenvs/#virtual-environments>`_ will help you get started.
 
-Suppose you have pipenv installed correctly and the current directory is in your local copy of athenacli, here are some useful commands:
+Follow `Installing Pipenv <https://docs.python-guide.org/dev/virtualenvs/#installing-pipenv>`_ guide to install it.
+
+Once pipenv is installed, cd into the local clone of athenacli folder and install athenacli using pipenv as follows:
 
 .. code-block:: bash
+
     $ # install necessary dependences for both production and development
-    $ pipenv install --dev 
+    $ pipenv install --dev
     $ # active virtual environment
     $ pipenv shell
-    $ # deactive virtual environment
-    $ deactive
-    $ # remove virtual environment for this project
-    $ pipenv --rm
+
+This will install the necessary dependencies as well as install athenacli from the working folder into a virtualenv. Athenacli is installed in an editable way, so any changes made to the code is immediately available in the installed version of athenacli. This makes it easy to change something in the code, launch athenacli and check the effects of your change.
 
 Running the tests
 ------------------
@@ -43,7 +44,7 @@ After that, tests can be run with:
 
 .. code-block:: bash
 
-    $ py.test
+    $ pytest
 
 Create a pull request
 ------------------------
