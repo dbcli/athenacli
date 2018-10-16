@@ -8,9 +8,8 @@ athenacli = {editable = true, path = "."}
 
 [dev-packages]
 mock = "*"
-pytest = "!=3.3.0"
+pytest = ">=3.5"
 tox = "*"
-twine = "==1.10.0"
+twine = "*"
 sphinx = "*"
-
-[requires]
+click = "*"

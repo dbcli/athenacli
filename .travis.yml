@@ -7,7 +7,7 @@ python:
 
 install:
   - pip install pipenv
-  - pipenv install --dev --skip-lock
+  - pipenv install --dev
 
 
 script:
