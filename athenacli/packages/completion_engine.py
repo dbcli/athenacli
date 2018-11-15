@@ -225,7 +225,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
         # We're probably in a function argument list
         return (Column(tables=extract_tables(full_text)),)
     elif token_v in ('set', 'by', 'distinct'):
-        return (Column(tables=extract_tables(full_text)))
+        return (Column(tables=extract_tables(full_text)),)
     elif token_v == 'as':
         # Don't suggest anything for an alias
         return tuple()

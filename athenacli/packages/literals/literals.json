@@ -67,7 +67,6 @@
         "AVG",
         "CONCAT",
         "COUNT",
-        "DISTINCT",
         "EVERY",
         "FIRST",
         "FORMAT",
