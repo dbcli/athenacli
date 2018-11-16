@@ -1,4 +1,11 @@
 
+0.1.4
+========
+
+Bugfix
+----------
+* `distinct` keyword cause an unexpected exception. (Thanks: @zzl0)
+
 0.1.3
 ========
 
