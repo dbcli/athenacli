@@ -130,5 +130,5 @@ Last but not least, thanks my team and manager encourage me to work on this hobb
 
 # Similar projects
 
-- [guardian/athena-cli](https://github.com/guardian/athena-cli): Presto-like CLI tool for AWS Athena.
+- [satterly/athena-cli](https://github.com/satterly/athena-cli): Presto-like CLI tool for AWS Athena.
 - [pengwynn/athena-cli](https://github.com/pengwynn/athena-cli): CLI for Amazon Athena, powered by JRuby.
