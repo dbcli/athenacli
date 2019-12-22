@@ -1,65 +1,60 @@
+from __future__ import unicode_literals
 import logging
 from prompt_toolkit.enums import EditingMode
-from prompt_toolkit.keys import Keys
-from prompt_toolkit.key_binding.manager import KeyBindingManager
-from .filters import HasSelectedCompletion
+from prompt_toolkit.filters import completion_is_selected
+from prompt_toolkit.key_binding import KeyBindings
 
 _logger = logging.getLogger(__name__)
 
 
-def cli_bindings():
+def cli_bindings(cli):
     """
     Custom key bindings for cli.
     """
-    key_binding_manager = KeyBindingManager(
-        enable_open_in_editor=True,
-        enable_system_bindings=True,
-        enable_auto_suggest_bindings=True,
-        enable_search=True,
-        enable_abort_and_exit_bindings=True)
+    kb = KeyBindings()
 
-    @key_binding_manager.registry.add_binding(Keys.F2)
+    @kb.add('f2')
     def _(event):
         """
         Enable/Disable SmartCompletion Mode.
         """
         _logger.debug('Detected F2 key.')
-        buf = event.cli.current_buffer
-        buf.completer.smart_completion = not buf.completer.smart_completion
+        cli.completer.start_completion = not cli.completer.start_completion
 
-    @key_binding_manager.registry.add_binding(Keys.F3)
+    @kb.add('f3')
     def _(event):
         """
         Enable/Disable Multiline Mode.
         """
         _logger.debug('Detected F3 key.')
-        buf = event.cli.current_buffer
-        buf.always_multiline = not buf.always_multiline
+        cli.multi_line = not cli.multi_line
 
-    @key_binding_manager.registry.add_binding(Keys.F4)
+    @kb.add('f4')
     def _(event):
         """
         Toggle between Vi and Emacs mode.
         """
         _logger.debug('Detected F4 key.')
-        if event.cli.editing_mode == EditingMode.VI:
-            event.cli.editing_mode = EditingMode.EMACS
+        if cli.key_bindings == 'vi':
+            event.app.editing_mode = EditingMode.EMACS
+            cli.key_bindings = 'emacs'
         else:
-            event.cli.editing_mode = EditingMode.VI
+            event.app.editing_mode = EditingMode.VI
+            cli.key_bindings = 'vi'
 
-    @key_binding_manager.registry.add_binding(Keys.Tab)
+    @kb.add('tab')
     def _(event):
         """
         Force autocompletion at cursor.
         """
         _logger.debug('Detected <Tab> key.')
-        b = event.cli.current_buffer
+        b = event.app.current_buffer
         if b.complete_state:
             b.complete_next()
         else:
-            event.cli.start_completion(select_first=True)
+            b.start_completion(select_first=True)
 
-    @key_binding_manager.registry.add_binding(Keys.ControlSpace)
+    @kb.add('c-space')
     def _(event):
         """
         Initialize autocompletion at cursor.
@@ -69,21 +64,21 @@ def cli_bindings():
         """
         _logger.debug('Detected <C-Space> key.')
 
-        b = event.cli.current_buffer
+        b = event.app.current_buffer
         if b.complete_state:
             b.complete_next()
         else:
-            event.cli.start_completion(select_first=False)
+            b.start_completion(select_first=False)
 
-    @key_binding_manager.registry.add_binding(Keys.ControlJ, filter=HasSelectedCompletion())
+    @kb.add('enter', filter=completion_is_selected)
     def _(event):
         """
         Makes the enter key work as the tab key only when showing the menu.
         """
-        _logger.debug('Detected <C-J> key.')
+        _logger.debug('Detected enter key.')
 
         event.current_buffer.complete_state = None
-        b = event.cli.current_buffer
+        b = event.app.current_buffer
         b.complete_state = None
 
-    return key_binding_manager
+    return kb

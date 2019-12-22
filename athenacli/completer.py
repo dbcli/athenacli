@@ -192,8 +192,8 @@ class AthenaCompleter(Completer):
                 return kw.upper()
             return kw.lower()
 
-        return (Completion(z if casing is None else apply_case(z), -len(text))
-                for x, y, z in sorted(completions))
+        return [Completion(z if casing is None else apply_case(z), -len(text))
+                for x, y, z in sorted(completions)]
 
     def get_completions(self, document, complete_event, smart_completion=None):
         word_before_cursor = document.get_word_before_cursor(WORD=True)
@@ -237,7 +237,7 @@ class AthenaCompleter(Completer):
     def get_function_matches(self, suggestion, word_before_cursor):
         # suggest user-defined functions using substring matching
         funcs = self.populate_schema_objects(suggestion.schema, 'functions')
-        user_funcs = set(self.find_matches(word_before_cursor, funcs))
+        user_funcs = self.find_matches(word_before_cursor, funcs)
 
         # suggest hardcoded functions using startswith matching only if
         # there is no schema qualifier. If a schema qualifier is
@@ -251,7 +251,7 @@ class AthenaCompleter(Completer):
                 fuzzy=False,
                 casing=self.keyword_casing
             )
-            return user_funcs | set(predefined_funcs)
+            user_funcs.extend(predefined_funcs)
 
         return user_funcs
 
