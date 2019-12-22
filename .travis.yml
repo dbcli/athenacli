@@ -1,17 +1,15 @@
 language: python
 python:
-  - "2.7"
   - "3.4"
   - "3.5"
   - "3.6"
 
 install:
-  - pip install pipenv
-  - pipenv install --dev
-
+  - pip install -r requirements-dev.txt
+  - pip install -e .
 
 script:
-  - pipenv run pytest test
+  - pytest test
 
 notifications:
   webhooks:

@@ -1,0 +1,6 @@
+mock >= 1.0.1
+pytest >= 4.6.5
+tox >= 2.7.0
+twine >= 1.11.0
+click >= 4.1
+sphinx

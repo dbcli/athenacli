@@ -12,23 +12,20 @@ from datetime import datetime
 from random import choice
 from collections import namedtuple
 
-from prompt_toolkit.layout.prompt import DefaultPrompt
+from prompt_toolkit.completion import DynamicCompleter
+from prompt_toolkit.shortcuts import PromptSession, CompleteStyle
+from prompt_toolkit.styles.pygments import style_from_pygments_cls
 from prompt_toolkit.layout.menus import CompletionsMenu
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import create_prompt_layout, create_eventloop
 from prompt_toolkit.document import Document
 from prompt_toolkit.layout.processors import (
     HighlightMatchingBracketProcessor,
     ConditionalProcessor)
-from prompt_toolkit.filters import Always, HasFocus, IsDone
+from prompt_toolkit.lexers import PygmentsLexer
+from prompt_toolkit.filters import HasFocus, IsDone
 from prompt_toolkit.enums import DEFAULT_BUFFER, EditingMode
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.interface import AcceptAction
-from prompt_toolkit import CommandLineInterface, Application, AbortAction
-from prompt_toolkit import CommandLineInterface, Application, AbortAction
-from prompt_toolkit.styles.from_pygments import style_from_pygments
 from pygments.lexers.sql import SqlLexer
-from pygments.token import Token
 from cli_helpers.tabular_output import TabularOutputFormatter
 from cli_helpers.tabular_output import preprocessors
 from pyathena.error import OperationalError
@@ -39,12 +36,12 @@ from athenacli.completer import AthenaCompleter
 from athenacli.style import AthenaStyle
 from athenacli.completion_refresher import CompletionRefresher
 from athenacli.packages.tabular_output import sql_format
-from athenacli.clistyle import style_factory
+from athenacli.clistyle import style_factory, style_factory_output
 from athenacli.packages.prompt_utils import confirm, confirm_destructive_query
 from athenacli.key_bindings import cli_bindings
 from athenacli.clitoolbar import create_toolbar_tokens_func
 from athenacli.lexer import Lexer
-from athenacli.clibuffer import CLIBuffer
+from athenacli.clibuffer import cli_is_multiline
 from athenacli.sqlexecute import SQLExecute
 from athenacli.encodingutils import utf8tounicode, text_type
 from athenacli.config import read_config_files, write_default_config, mkdir_p, AWSConfig
@@ -101,13 +98,14 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
         self.formatter.cli = self
         sql_format.register_new_formatter(self.formatter)
 
-        self.output_style = style_factory(self.syntax_style, _cfg['colors'])
+        self.cli_style = _cfg['colors']
+        self.output_style = style_factory_output(self.syntax_style, self.cli_style)
 
         self.completer = AthenaCompleter()
         self._completer_lock = threading.Lock()
         self.completion_refresher = CompletionRefresher()
 
-        self.cli = None
+        self.prompt_app = None
 
         self.query_history = []
         # Register custom special commands.
@@ -201,7 +199,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
             database
         )
 
-    def handle_editor_command(self, cli, document):
+    def handle_editor_command(self, text):
         """
         Editor command is any query that is prefixed or suffixed
         by a '\e'. The reason for a while loop is because a user
@@ -210,28 +208,25 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
         "select * from \e"<enter> to edit it in vim, then come
         back to the prompt with the edited query "select * from
         blah where q = 'abc'\e" to edit it again.
-        :param cli: CommandLineInterface
-        :param document: Document
+        :param text: str
         :return: Document
         """
-        # FIXME: using application.pre_run_callables like this here is not the best solution.
-        # It's internal api of prompt_toolkit that may change. This was added to fix
-        # https://github.com/dbcli/pgcli/issues/668. We may find a better way to do it in the future.
-        saved_callables = cli.application.pre_run_callables
-        while special.editor_command(document.text):
-            filename = special.get_filename(document.text)
-            query = (special.get_editor_query(document.text) or
+        while special.editor_command(text):
+            filename = special.get_filename(text)
+            query = (special.get_editor_query(text) or
                      self.get_last_query())
             sql, message = special.open_external_editor(filename, sql=query)
             if message:
                 # Something went wrong. Raise an exception and bail.
                 raise RuntimeError(message)
-            cli.current_buffer.document = Document(sql, cursor_position=len(sql))
-            cli.application.pre_run_callables = []
-            document = cli.run()
+            while True:
+                try:
+                    text = self.prompt_app.prompt(default=sql)
+                    break
+                except KeyboardInterrupt:
+                    sql = ''
             continue
-        cli.application.pre_run_callables = saved_callables
-        return document
+        return text
 
     def run_query(self, query, new_line=True):
         """Runs *query*."""
@@ -256,25 +251,28 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
 
         history_file = os.path.expanduser(self.config['main']['history_file'])
         history = FileHistory(history_file)
-        self.cli = self._build_cli(history)
+        self._build_prompt_app(history)
 
         def one_iteration():
-            document = self.cli.run()
+            try:
+                text = self.prompt_app.prompt()
+            except KeyboardInterrupt:
+                return
 
             special.set_expanded_output(False)
             try:
-                document = self.handle_editor_command(self.cli, document)
+                text = self.handle_editor_command(text)
             except RuntimeError as e:
-                LOGGER.error("sql: %r, error: %r", document.text, e)
+                LOGGER.error("sql: %r, error: %r", text, e)
                 LOGGER.error("traceback: %r", traceback.format_exc())
                 self.echo(str(e), err=True, fg='red')
                 return
 
-            if not document.text.strip():
+            if not text.strip():
                 return
 
             if self.destructive_warning:
-                destroy = confirm_destructive_query(document.text)
+                destroy = confirm_destructive_query(text)
                 if destroy is None:
                     pass  # Query was not destructive. Nothing to do here.
                 elif destroy is True:
@@ -286,12 +284,12 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
             mutating = False
 
             try:
-                LOGGER.debug('sql: %r', document.text)
+                LOGGER.debug('sql: %r', text)
 
-                special.write_tee(self.get_prompt(self.prompt) + document.text)
+                special.write_tee(self.get_prompt(self.prompt) + text)
                 successful = False
                 start = time()
-                res = self.sqlexecute.run(document.text)
+                res = self.sqlexecute.run(text)
                 successful = True
                 threshold = 1000
                 result_count = 0
@@ -336,20 +334,19 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
                 self.echo('Not Yet Implemented.', fg="yellow")
             except OperationalError as e:
                 LOGGER.debug("Exception: %r", e)
-                LOGGER.error("sql: %r, error: %r", document.text, e)
+                LOGGER.error("sql: %r, error: %r", text, e)
                 LOGGER.error("traceback: %r", traceback.format_exc())
                 self.echo(str(e), err=True, fg='red')
             except Exception as e:
-                LOGGER.error("sql: %r, error: %r", document.text, e)
+                LOGGER.error("sql: %r, error: %r", text, e)
                 LOGGER.error("traceback: %r", traceback.format_exc())
                 self.echo(str(e), err=True, fg='red')
             else:
                 # Refresh the table names and column names if necessary.
-                if need_completion_refresh(document.text):
-                    LOGGER.debug("=" * 10)
+                if need_completion_refresh(text):
                     self.refresh_completions()
 
-            query = Query(document.text, successful, mutating)
+            query = Query(text, successful, mutating)
             self.query_history.append(query)
 
         try:
@@ -378,7 +375,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
         message will be written to the output file, if enabled.
         """
         if output:
-            size = self.cli.output.get_size()
+            size = self.prompt_app.output.get_size()
 
             margin = self.get_output_margin(status)
 
@@ -499,85 +496,63 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
         """
         with self._completer_lock:
             self.completer = new_completer
-            # When cli is first launched we call refresh_completions before
-            # instantiating the cli object. So it is necessary to check if cli
-            # exists before trying the replace the completer object in cli.
-            if self.cli:
-                self.cli.current_buffer.completer = new_completer
 
-        if self.cli:
+        if self.prompt_app:
             # After refreshing, redraw the CLI to clear the statusbar
             # "Refreshing completions..." indicator
-            self.cli.request_redraw()
+            self.prompt_app.app.invalidate()
 
-    def _build_cli(self, history):
-        key_binding_manager = cli_bindings()
+    def _build_prompt_app(self, history):
+        key_bindings = cli_bindings(self)
 
-        def prompt_tokens(cli):
+        def get_message():
             prompt = self.get_prompt(self.prompt)
             if len(prompt) > self.MAX_LEN_PROMPT:
                 prompt = self.get_prompt('\\r:\\d> ')
-            return [(Token.Prompt, prompt)]
+            return [('class:prompt', prompt)]
 
-        def get_continuation_tokens(cli, width):
-            prompt = self.get_prompt(self.prompt_continuation_format)
-            token = (
-                Token.Continuation,
-                ' ' * (width - len(prompt)) + prompt
-            )
-            return [token]
+        def get_continuation(width, line_number, is_soft_wrap):
+            continuation = ' ' * (width -1) + ' '
+            return [('class:continuation', continuation)]
 
         def show_suggestion_tip():
             return self.iterations < 2
 
         get_toolbar_tokens = create_toolbar_tokens_func(
-            self.completion_refresher.is_refreshing,
-            show_suggestion_tip)
-
-        layout = create_prompt_layout(
-            lexer=Lexer,
-            multiline=True,
-            get_prompt_tokens=prompt_tokens,
-            get_continuation_tokens=get_continuation_tokens,
-            get_bottom_toolbar_tokens=get_toolbar_tokens,
-            display_completions_in_columns=False,
-            extra_input_processors=[
-                ConditionalProcessor(
-                    processor=HighlightMatchingBracketProcessor(chars='[](){}'),
-                    filter=HasFocus(DEFAULT_BUFFER) & ~IsDone())
-            ],
-            reserve_space_for_menu=self.get_reserved_space()
-        )
+            self, show_suggestion_tip)
 
         with self._completer_lock:
-            buf = CLIBuffer(
-                always_multiline=self.multi_line,
-                completer=self.completer,
-                history=history,
-                auto_suggest=AutoSuggestFromHistory(),
-                complete_while_typing=Always(),
-                accept_action=AcceptAction.RETURN_DOCUMENT)
-
             if self.key_bindings == 'vi':
                 editing_mode = EditingMode.VI
             else:
                 editing_mode = EditingMode.EMACS
-
-            application = Application(
-                style=style_from_pygments(style_cls=self.output_style),
-                layout=layout,
-                buffer=buf,
-                key_bindings_registry=key_binding_manager.registry,
-                on_exit=AbortAction.RAISE_EXCEPTION,
-                on_abort=AbortAction.RETRY,
+            
+            self.prompt_app = PromptSession(
+                lexer=PygmentsLexer(Lexer),
+                reserve_space_for_menu=self.get_reserved_space(),
+                message=get_message,
+                prompt_continuation=get_continuation,
+                bottom_toolbar=get_toolbar_tokens,
+                complete_style=CompleteStyle.COLUMN,
+                input_processors=[ConditionalProcessor(
+                    processor=HighlightMatchingBracketProcessor(
+                        chars='[](){}'),
+                    filter=HasFocus(DEFAULT_BUFFER) & ~IsDone()
+                )],
+                tempfile_suffix='.sql',
+                completer=DynamicCompleter(lambda: self.completer),
+                history=history,
+                auto_suggest=AutoSuggestFromHistory(),
+                complete_while_typing=True,
+                multiline=cli_is_multiline(self),
+                style=style_factory(self.syntax_style, self.cli_style),
+                include_default_pygments_style=False,
+                key_bindings=key_bindings,
+                enable_open_in_editor=True,
+                enable_system_prompt=True,
                 editing_mode=editing_mode,
-                ignore_case=True)
-
-            cli = CommandLineInterface(
-                application=application,
-                eventloop=create_eventloop())
-
-            return cli
+                search_ignore_case=True
+            )
 
     def get_prompt(self, string):
         sqlexecute = self.sqlexecute

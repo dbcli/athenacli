@@ -1,20 +1,19 @@
-from prompt_toolkit.buffer import Buffer
+from __future__ import unicode_literals
+
+from prompt_toolkit.enums import DEFAULT_BUFFER
 from prompt_toolkit.filters import Condition
+from prompt_toolkit.application import get_app
 
 
-class CLIBuffer(Buffer):
-    def __init__(self, always_multiline, *args, **kwargs):
-        self.always_multiline = always_multiline
-
-        @Condition
-        def is_multiline():
-            return self.always_multiline and not _multiline_exception(self.document.text)
-
-        super(self.__class__, self).__init__(
-            *args, is_multiline=is_multiline,
-            tempfile_suffix='.sql',
-            **kwargs
-        )
+def cli_is_multiline(cli):
+    @Condition
+    def cond():
+        doc = get_app().layout.get_buffer_by_name(DEFAULT_BUFFER).document
+        if not cli.multi_line:
+            return False
+        else:
+            return not _multiline_exception(doc.text)
+    return cond
 
 
 def _multiline_exception(text):
