@@ -1,3 +1,9 @@
+(Unreleased; add upcoming change notes here)
+========
+
+Internal
+-----------
+* Require prompt_toolkit>=2.0.6. (Thanks: @zzl0)
 
 0.1.4
 ========
