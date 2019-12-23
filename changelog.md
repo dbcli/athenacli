@@ -1,4 +1,7 @@
 (Unreleased; add upcoming change notes here)
+==============================================
+
+1.1.2
 ========
 
 Internal

@@ -4,3 +4,4 @@ tox >= 2.7.0
 twine >= 1.11.0
 click >= 4.1
 sphinx
+wheel
