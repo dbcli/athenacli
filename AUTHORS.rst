@@ -14,6 +14,7 @@ Contributors:
   * Joe Block
   * Jash Gala
   * Hourann
+  * Aaron Brager
 
 Creator:
 --------

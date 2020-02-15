@@ -52,3 +52,21 @@ def test_column_name_completion(completer, complete_event):
         Document(text=text, cursor_position=position),
         complete_event)
     assert result == list(map(Completion, sorted(completer.all_completions)))
+
+def test_various_join_completions(completer, complete_event):
+    for join_type in ['INNER', 'OUTER', 'CROSS', 'LEFT', 'RIGHT', 'FULL']:
+        text = 'SELECT foo FROM bar {join_type} '
+        position = len(text)
+        result = completer.get_completions(
+            Document(text=text, cursor_position=position),
+            complete_event)
+        assert Completion(text='JOIN') in result
+
+def test_outer_join_completion(completer, complete_event):
+    for join_type in ['LEFT', 'RIGHT', 'FULL']:
+        text = 'SELECT foo FROM bar {join_type} '
+        position = len(text)
+        result = completer.get_completions(
+            Document(text=text, cursor_position=position),
+            complete_event)
+        assert Completion(text='OUTER JOIN') in result

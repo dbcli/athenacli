@@ -1,6 +1,10 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+Features
+----------
+* Add auto-complete support for `JOIN` and related keywords. (Thanks: @getaaron)
+
 1.1.2
 ========
 
