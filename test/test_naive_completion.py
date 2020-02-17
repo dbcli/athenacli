@@ -59,7 +59,8 @@ def test_various_join_completions(completer, complete_event):
         position = len(text)
         result = completer.get_completions(
             Document(text=text, cursor_position=position),
-            complete_event)
+            complete_event,
+            smart_completion=True)
         assert Completion(text='JOIN') in result
 
 def test_outer_join_completion(completer, complete_event):
@@ -68,5 +69,6 @@ def test_outer_join_completion(completer, complete_event):
         position = len(text)
         result = completer.get_completions(
             Document(text=text, cursor_position=position),
-            complete_event)
+            complete_event,
+            smart_completion=True)
         assert Completion(text='OUTER JOIN') in result
