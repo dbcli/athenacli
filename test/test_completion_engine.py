@@ -2,7 +2,7 @@ import os
 import pytest
 
 from athenacli.packages.completion_engine import (
-    suggest_type, Column, Function, Alias, Keyword
+    suggest_type, Column, Function, Alias, Keyword, Table, View
 )
 
 
@@ -28,6 +28,15 @@ def test_select_suggests_cols_with_qualified_table_scope():
         Alias(aliases=['tabl']),
         Keyword(last_token='SELECT'))
 
+def test_join_suggests_cols_with_qualified_table_scope():
+    expression = 'SELECT * FROM tabl a JOIN tabl b on a.'
+    suggestions = suggest_type(expression, expression)
+
+    assert suggestions == (
+        Column(tables=((None, 'tabl', 'a'),), drop_unique=None),
+        Table(schema='a'),
+        View(schema='a'),
+        Function(schema='a', filter=None))
 
 @pytest.mark.parametrize('expression', [
     'SELECT * FROM tabl WHERE ',

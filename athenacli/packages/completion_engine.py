@@ -290,7 +290,7 @@ def suggest_based_on_last_token(token, text_before_cursor, full_text, identifier
         if parent:
             # "ON parent.<suggestion>"
             # parent can be either a schema name or table alias
-            tables = tuple(t for t in tables if identifies(parent, t))
+            tables = tuple(t for t in tables if identifies(parent, *t))
             return (
                 Column(tables=tables),
                 Table(schema=parent),

@@ -20,12 +20,22 @@ The installation instructions in the README file are intended for users of athen
 
 It is highly recommended to use virtualenv for development. If you don't know what a virtualenv is, `this guide <https://docs.python-guide.org/dev/virtualenvs/#virtual-environments>`_ will help you get started.
 
-Create a virtualenv (let's call it athenacli-dev). Activate it:
+Create a virtualenv (let's call it athenacli-dev):
+
+.. code-block:: bash
+
+    $ virtualenv athenacli-dev
+
+Activate it:
+
+.. code-block:: bash
 
     $ source ./athenacli-dev/bin/activate
+
 Once the virtualenv is activated, cd into the local clone of athenacli folder and install athenacli using pip as follows:
 
 .. code-block:: bash
+
     $ pip install -e .
 
 This will install the necessary dependencies as well as install athenacli from the working folder into a virtualenv. Athenacli is installed in an editable way, so any changes made to the code is immediately available in the installed version of athenacli. This makes it easy to change something in the code, launch athenacli and check the effects of your change.
@@ -38,6 +48,7 @@ Currently we don't have enough tests for athenacli, because we haven't found an 
 First, install the requirements for testing:
 
 .. code-block:: bash
+
     $ pip install -r requirements-dev.txt
 
 After that, tests can be run with:
