@@ -1,9 +1,13 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+Features
+----------
+* Add auto-complete support for `JOIN` and related keywords. (Thanks: @getaaron)
+
 Bugfix
 ----------
-* Fix bug when completing `ON parent.` clauses. (Thanks @pgr0ss)
+* Fix bug when completing `ON parent.` clauses. (Thanks: @pgr0ss)
 
 1.1.2
 ========

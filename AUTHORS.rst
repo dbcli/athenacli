@@ -15,6 +15,7 @@ Contributors:
   * Jash Gala
   * Hourann
   * Paul Gross
+  * Aaron Brager
 
 Creator:
 --------
