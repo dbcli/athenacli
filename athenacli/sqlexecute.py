@@ -85,6 +85,8 @@ class SQLExecute(object):
         '''Get the current result's data from the cursor.'''
         title = headers = None
 
+        special.set_output_location(cursor.output_location)
+
         # cursor.description is not None for queries that return result sets,
         # e.g. SELECT or SHOW.
         if cursor.description is not None:

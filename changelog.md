@@ -1,6 +1,13 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+1.2.0
+========
+
+Features
+----------
+* Add a download command to fetch query results to a local CSV. (Thanks: @pgr0ss)
+
 1.1.3
 ========
 
