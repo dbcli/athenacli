@@ -17,12 +17,17 @@ from . import export
 from .main import special_command, NO_QUERY, PARSED_QUERY
 from .utils import handle_cd_command
 
+OUTPUT_LOCATION = None
 TIMING_ENABLED = False
 use_expanded_output = False
 PAGER_ENABLED = True
 tee_file = None
 once_file = written_to_once_file = None
 
+@export
+def set_output_location(val):
+    global OUTPUT_LOCATION
+    OUTPUT_LOCATION = val
 
 @export
 def set_timing_enabled(val):
@@ -431,3 +436,12 @@ def watch_query(arg, **kwargs):
             return
         finally:
             set_pager_enabled(old_pager_enabled)
+
+@special_command('download', 'download', 'Download results from last query.', arg_type=NO_QUERY)
+def download():
+    if OUTPUT_LOCATION is None:
+        return [(None, None, None, "No OUTPUT_LOCATION from last query")]
+    else:
+        aws_s3_command = f"aws s3 cp {OUTPUT_LOCATION} /tmp/"
+        click.echo(f"Running: {aws_s3_command}")
+        return execute_system_command(aws_s3_command)
