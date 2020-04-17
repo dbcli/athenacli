@@ -93,11 +93,11 @@ class SQLExecute(object):
         if cursor.description is not None:
             headers = [x[0] for x in cursor.description]
             rows = cursor.fetchall()
-            status = format_status(len(rows))
+            status = format_status(rows_length=len(rows), cursor=cursor)
         else:
             logger.debug('No rows in result.')
             rows = None
-            status = format_status(None)
+            status = format_status(rows_length=None, cursor=cursor)
         return (title, rows, headers, status)
 
     def tables(self):
