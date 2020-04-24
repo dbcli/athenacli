@@ -1,6 +1,13 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+1.3.0
+========
+
+Features
+----------
+* Show query execution statistics, such as the amount of data scanned and the approximate cost. (Thanks: @pgr0ss)
+
 1.2.0
 ========
 

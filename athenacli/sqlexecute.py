@@ -5,6 +5,7 @@ import sqlparse
 import pyathena
 
 from athenacli.packages import special
+from athenacli.packages.format_utils import format_status
 
 logger = logging.getLogger(__name__)
 
@@ -92,11 +93,11 @@ class SQLExecute(object):
         if cursor.description is not None:
             headers = [x[0] for x in cursor.description]
             rows = cursor.fetchall()
-            status = '%d row%s in set' % (len(rows), '' if len(rows) == 1 else 's')
+            status = format_status(rows_length=len(rows), cursor=cursor)
         else:
             logger.debug('No rows in result.')
             rows = None
-            status = 'Query OK'
+            status = format_status(rows_length=None, cursor=cursor)
         return (title, rows, headers, status)
 
     def tables(self):
