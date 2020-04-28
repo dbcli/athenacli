@@ -6,9 +6,10 @@ from setuptools import setup, find_packages
 
 _version_re = re.compile(r'__version__\s+=\s+(.*)')
 
-with open('athenacli/__init__.py', 'rb') as f:
-    version = str(ast.literal_eval(_version_re.search(
-        f.read().decode('utf-8')).group(1)))
+with open('athenacli/__init__.py') as f:
+    version = ast.literal_eval(
+        _version_re.search(f.read()).group(1)
+    )
 
 description = 'CLI for Athena Database. With auto-completion and syntax highlighting.'
 
@@ -52,13 +53,10 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: Unix',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: SQL',
         'Topic :: Database',
         'Topic :: Database :: Front-Ends',

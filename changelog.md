@@ -1,6 +1,10 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+Internal:
+---------
+* deprecate python versions 2.7, 3.4, 3.5
+
 1.3.0
 ========
 

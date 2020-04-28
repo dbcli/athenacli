@@ -43,7 +43,6 @@ from athenacli.clitoolbar import create_toolbar_tokens_func
 from athenacli.lexer import Lexer
 from athenacli.clibuffer import cli_is_multiline
 from athenacli.sqlexecute import SQLExecute
-from athenacli.encodingutils import utf8tounicode, text_type
 from athenacli.config import read_config_files, write_default_config, mkdir_p, AWSConfig
 
 
@@ -438,10 +437,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
         if cur:
             column_types = None
             if hasattr(cur, 'description'):
-                def get_col_type(col):
-                    col_type = text_type
-                    return col_type if type(col_type) is type else text_type
-                column_types = [get_col_type(col) for col in cur.description]
+                column_types = [str for col in cur.description]
 
             if max_width is not None:
                 cur = list(cur)
@@ -451,7 +447,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
                 column_types=column_types,
                 **output_kwargs)
 
-            if isinstance(formatted, (text_type)):
+            if isinstance(formatted, str):
                 formatted = formatted.splitlines()
             formatted = iter(formatted)
 
@@ -462,7 +458,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
                     len(first_line) > max_width):
                 formatted = self.formatter.format_output(
                     cur, headers, format_name='vertical', column_types=column_types, **output_kwargs)
-                if isinstance(formatted, (text_type)):
+                if isinstance(formatted, str):
                     formatted = iter(formatted.splitlines())
 
             output = itertools.chain(output, formatted)

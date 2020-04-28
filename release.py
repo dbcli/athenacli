@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 """A script to publish a release of athenacli to PyPI."""
 
-from __future__ import print_function
-import io
 from optparse import OptionParser
 import re
 import subprocess
@@ -51,7 +49,7 @@ def version(version_file):
     _version_re = re.compile(
         r'__version__\s+=\s+(?P<quote>[\'"])(?P<version>.*)(?P=quote)')
 
-    with io.open(version_file, encoding='utf-8') as f:
+    with iopen(version_file) as f:
         ver = _version_re.search(f.read()).group('version')
 
     return ver
