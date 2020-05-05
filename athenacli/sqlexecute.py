@@ -25,14 +25,14 @@ class SQLExecute(object):
         aws_secret_access_key,
         region_name,
         s3_staging_dir,
-        assume_role_arn,
+        role_arn,
         database
     ):
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.region_name = region_name
         self.s3_staging_dir = s3_staging_dir
-        self.assume_role_arn = assume_role_arn
+        self.role_arn = role_arn
         self.database = database
 
         self.connect()
@@ -44,7 +44,7 @@ class SQLExecute(object):
             region_name=self.region_name,
             s3_staging_dir=self.s3_staging_dir,
             schema_name=database or self.database,
-            role_arn=self.assume_role_arn,
+            role_arn=self.role_arn,
             poll_interval=0.2 # 200ms
         )
         self.database = database or self.database

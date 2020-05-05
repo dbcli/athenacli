@@ -57,7 +57,7 @@ class CompletionRefresher(object):
             aws_secret_access_key = e.aws_secret_access_key,
             region_name = e.region_name,
             s3_staging_dir = e.s3_staging_dir,
-            assume_role_arn = e.assume_role_arn,
+            role_arn = e.role_arn,
             database = e.database
         )
 

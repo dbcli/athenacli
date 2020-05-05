@@ -195,7 +195,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
             aws_secret_access_key = aws_config.aws_secret_access_key,
             region_name = aws_config.region,
             s3_staging_dir = aws_config.s3_staging_dir,
-            assume_role_arn = aws_config.assume_role_arn,
+            role_arn = aws_config.role_arn,
             database = database
         )
 
