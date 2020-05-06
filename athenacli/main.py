@@ -191,11 +191,12 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
 
     def connect(self, aws_config, database):
         self.sqlexecute = SQLExecute(
-            aws_config.aws_access_key_id,
-            aws_config.aws_secret_access_key,
-            aws_config.region,
-            aws_config.s3_staging_dir,
-            database
+            aws_access_key_id = aws_config.aws_access_key_id,
+            aws_secret_access_key = aws_config.aws_secret_access_key,
+            region_name = aws_config.region,
+            s3_staging_dir = aws_config.s3_staging_dir,
+            role_arn = aws_config.role_arn,
+            database = database
         )
 
     def handle_editor_command(self, text):

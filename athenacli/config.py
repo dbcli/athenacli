@@ -26,6 +26,8 @@ class AWSConfig(object):
         self.aws_secret_access_key = self.get_val(aws_secret_access_key, _cfg['aws_secret_access_key'])
         self.region = self.get_val(region, _cfg['region'], self.get_region())
         self.s3_staging_dir = self.get_val(s3_staging_dir, _cfg['s3_staging_dir'])
+        # enable connection to assume role
+        self.role_arn = self.get_val(_cfg.get('role_arn'))
 
     def get_val(self, *vals):
         """Return the first True value in `vals` list, otherwise return None."""
