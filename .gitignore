@@ -57,3 +57,4 @@ target/
 # vscode
 .vscode/
 .venv/
+.python-version

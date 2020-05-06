@@ -1,4 +1,6 @@
 (Unreleased; add upcoming change notes here)
+* Add support for `arn_role` in athenaclirc file to allow connection to assume 
+aws role
 ==============================================
 
 Internal:
