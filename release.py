@@ -49,7 +49,7 @@ def version(version_file):
     _version_re = re.compile(
         r'__version__\s+=\s+(?P<quote>[\'"])(?P<version>.*)(?P=quote)')
 
-    with iopen(version_file) as f:
+    with open(version_file) as f:
         ver = _version_re.search(f.read()).group('version')
 
     return ver
@@ -65,6 +65,8 @@ def commit_for_release(version_file, ver):
 def create_git_tag(tag_name):
     run_step('git', 'tag', tag_name)
 
+def clear_distribution_files():
+    run_step('rm', '-r', 'dist')
 
 def create_distribution_files():
     run_step('python', 'setup.py', 'sdist', 'bdist_wheel')
@@ -121,6 +123,7 @@ if __name__ == '__main__':
 
     commit_for_release('athenacli/__init__.py', ver)
     create_git_tag('v{}'.format(ver))
+    clear_distribution_files()
     create_distribution_files()
     push_to_github()
     push_tags_to_github()
