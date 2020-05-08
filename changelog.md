@@ -1,11 +1,20 @@
 (Unreleased; add upcoming change notes here)
-* Add support for `role_arn` in athenaclirc file to allow connection to assume 
-aws role
 ==============================================
 
+Features:
+----------
+* Add support for `role_arn` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)
+
+1.3.3
+========
+
+Features
+----------
+* Add support for `arn_role` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)
+
 Internal:
----------
-* deprecate python versions 2.7, 3.4, 3.5
+----------
+* deprecate python versions 2.7, 3.4, 3.5 (Thanks: @zzl0)
 
 1.3.0
 ========
