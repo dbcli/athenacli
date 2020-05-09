@@ -6,6 +6,9 @@ aws_access_key_id = ''
 aws_secret_access_key = ''
 region = '' # e.g us-west-2, us-east-1
 
+# Add role_arn to assume a role required for Athena access
+role_arn = '' # e.g. arn:aws:iam::987654321000:role/MyAthenaAccessRole
+
 # Amazon S3 staging directory where query results are stored
 # NOTE: S3 should in the same region as specified above.
 # The format is 's3://<your s3 directory path>'
