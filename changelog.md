@@ -4,6 +4,7 @@
 Features:
 ----------
 * Add support for `role_arn` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)
+* Allow using an empty `--athenaclirc=` to not generate the default config file on first start (Thanks: @jankatins)
 * Allow starting with `--profile=<aws_profile_name>` without having a corresponding entry in the `athenaclirc` config
   file (Thanks: @jankatins) 
 
