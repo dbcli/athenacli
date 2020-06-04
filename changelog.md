@@ -7,6 +7,8 @@ Features:
 * Allow using an empty `--athenaclirc=` to not generate the default config file on first start (Thanks: @jankatins)
 * Allow starting with `--profile=<aws_profile_name>` without having a corresponding entry in the `athenaclirc` config
   file (Thanks: @jankatins) 
+* Add support for supplying the SQL query on stdin by using `-` (minus) as query string: `--execute=-`. 
+  (Thanks: @jankatins)
 
 1.3.3
 ========
