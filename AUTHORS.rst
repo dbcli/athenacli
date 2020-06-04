@@ -17,6 +17,7 @@ Contributors:
   * Paul Gross
   * Aaron Brager
   * Patrick Park
+  * Jan Katins
 
 Creator:
 --------
