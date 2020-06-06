@@ -5,6 +5,7 @@ import sys
 import errno
 import boto3
 from configobj import ConfigObj, ConfigObjError
+from collections import defaultdict
 
 
 try:
@@ -20,7 +21,13 @@ class AWSConfig(object):
     def __init__(self, aws_access_key_id, aws_secret_access_key,
                  region, s3_staging_dir, profile, config):
         key = 'aws_profile %s' % profile
-        _cfg = config[key]
+        try:
+            _cfg = config[key]
+        except:
+            # this assumes that the profile is only known in the regular AWS config -> the boto lib will get it
+            # from there. This is especially important if we have some kind of additional temporary session keys for
+            # which the login fails if we set aws_access_key_id/aws_secret_access_key here
+            _cfg = defaultdict(lambda: None)
 
         self.aws_access_key_id = self.get_val(aws_access_key_id, _cfg['aws_access_key_id'])
         self.aws_secret_access_key = self.get_val(aws_secret_access_key, _cfg['aws_secret_access_key'])

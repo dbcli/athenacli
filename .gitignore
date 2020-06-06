@@ -58,3 +58,6 @@ target/
 .vscode/
 .venv/
 .python-version
+
+# Jetbrains Editors
+.idea/
