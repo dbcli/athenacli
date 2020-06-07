@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import select
 import click
 import threading
 import logging
@@ -623,7 +624,7 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
       - athenacli
       - athenacli my_database
     '''
-    if athenaclirc and (athenaclirc == ATHENACLIRC) and (not os.path.exists(os.path.expanduser(ATHENACLIRC))):
+    if (athenaclirc == ATHENACLIRC) and (not os.path.exists(os.path.expanduser(ATHENACLIRC))):
         err_msg = '''
         Welcome to athenacli!
 
@@ -651,7 +652,12 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
 
     #  --execute argument
     if execute:
-        if os.path.exists(execute):
+        if execute == '-':
+            if select.select([sys.stdin, ], [], [], 0.0)[0]:
+                query = sys.stdin.read()
+            else:
+                raise RuntimeError("No query to execute on stdin")
+        elif os.path.exists(execute):
             with open(execute) as f:
                 query = f.read()
         else:
