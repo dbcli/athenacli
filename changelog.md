@@ -1,6 +1,9 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+1.4.0
+=========
+
 Features:
 ----------
 * Add support for `role_arn` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)

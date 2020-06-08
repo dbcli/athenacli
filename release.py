@@ -56,7 +56,6 @@ def version(version_file):
 
 
 def commit_for_release(version_file, ver):
-    run_step('git', 'reset')
     run_step('git', 'add', version_file)
     run_step('git', 'commit', '--message',
              'Releasing version {}'.format(ver))
