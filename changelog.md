@@ -1,6 +1,5 @@
 (Unreleased; add upcoming change notes here)
-* Add support for `role_arn` in athenaclirc file to allow connection to assume 
-aws role
+* Fix bug: athenaclirc not found if not in path
 ==============================================
 
 1.4.0
