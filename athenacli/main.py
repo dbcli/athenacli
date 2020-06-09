@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import select
 import click
 import threading
 import logging
@@ -62,7 +63,9 @@ class AthenaCli(object):
     def __init__(self, region, aws_access_key_id, aws_secret_access_key,
                  s3_staging_dir, athenaclirc, profile, database):
 
-        config_files = (DEFAULT_CONFIG_FILE, athenaclirc)
+        config_files = [DEFAULT_CONFIG_FILE]
+        if os.path.exists(athenaclirc):
+            config_files.append(athenaclirc)
         _cfg = self.config = read_config_files(config_files)
 
         self.init_logging(_cfg['main']['log_file'], _cfg['main']['log_level'])
@@ -523,7 +526,7 @@ For more details about the error, you can check the log file: %s''' % (ATHENACLI
                 editing_mode = EditingMode.VI
             else:
                 editing_mode = EditingMode.EMACS
-            
+
             self.prompt_app = PromptSession(
                 lexer=PygmentsLexer(Lexer),
                 reserve_space_for_menu=self.get_reserved_space(),
@@ -649,7 +652,12 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
 
     #  --execute argument
     if execute:
-        if os.path.exists(execute):
+        if execute == '-':
+            if select.select([sys.stdin, ], [], [], 0.0)[0]:
+                query = sys.stdin.read()
+            else:
+                raise RuntimeError("No query to execute on stdin")
+        elif os.path.exists(execute):
             with open(execute) as f:
                 query = f.read()
         else:

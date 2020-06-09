@@ -3,9 +3,28 @@
 aws role
 ==============================================
 
+1.4.0
+=========
+
+Features:
+----------
+* Add support for `role_arn` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)
+* Allow using an empty `--athenaclirc=` to not generate the default config file on first start (Thanks: @jankatins)
+* Allow starting with `--profile=<aws_profile_name>` without having a corresponding entry in the `athenaclirc` config
+  file (Thanks: @jankatins) 
+* Add support for supplying the SQL query on stdin by using `-` (minus) as query string: `--execute=-`. 
+  (Thanks: @jankatins)
+
+1.3.3
+========
+
+Features
+----------
+* Add support for `arn_role` in athenaclirc file to allow connection to assume aws role. (Thanks: @pdpark)
+
 Internal:
----------
-* deprecate python versions 2.7, 3.4, 3.5
+----------
+* deprecate python versions 2.7, 3.4, 3.5 (Thanks: @zzl0)
 
 1.3.0
 ========

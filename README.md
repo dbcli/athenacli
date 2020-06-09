@@ -3,7 +3,6 @@
 [![image](https://img.shields.io/pypi/l/athenacli.svg)](https://pypi.org/project/athenacli/)
 [![image](https://img.shields.io/pypi/pyversions/athenacli.svg)](https://pypi.org/project/athenacli/)
 [![Join the chat at https://gitter.im/dbcli/athenacli](https://badges.gitter.im/dbcli/athenacli.svg)](https://gitter.im/dbcli/athenacli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![image](https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg)](https://saythanks.io/to/zzl0)
 
 # Introduction
 
