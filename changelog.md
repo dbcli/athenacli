@@ -1,4 +1,5 @@
 (Unreleased; add upcoming change notes here)
+* Fix bug: athenaclirc not found if not in path
 ==============================================
 
 1.4.0

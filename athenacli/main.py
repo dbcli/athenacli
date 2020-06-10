@@ -64,7 +64,7 @@ class AthenaCli(object):
                  s3_staging_dir, athenaclirc, profile, database):
 
         config_files = [DEFAULT_CONFIG_FILE]
-        if os.path.exists(athenaclirc):
+        if os.path.exists(os.path.expanduser(athenaclirc)):
             config_files.append(athenaclirc)
         _cfg = self.config = read_config_files(config_files)
 
