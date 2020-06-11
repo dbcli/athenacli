@@ -1,6 +1,12 @@
 (Unreleased; add upcoming change notes here)
-* Fix bug: athenaclirc not found if not in path
 ==============================================
+
+1.4.1
+=========
+
+Bugfix
+----------
+* Fix bug: athenaclirc not found if not in path. ((Thanks: @pdpark))
 
 1.4.0
 =========
