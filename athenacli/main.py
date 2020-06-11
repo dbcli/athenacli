@@ -83,7 +83,7 @@ There was an error while connecting to AWS Athena. It could be caused due to
 missing/incomplete configuration. Please verify the configuration in %s
 and run athenacli again.
 
-For more details about the error, you can check the log file: %s''' % (ATHENACLIRC, _cfg['main']['log_file'])
+For more details about the error, you can check the log file: %s''' % (athenaclirc, _cfg['main']['log_file'])
             self.echo(err_msg)
             LOGGER.exception('error: %r', e)
             sys.exit(1)
@@ -624,7 +624,7 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
       - athenacli
       - athenacli my_database
     '''
-    if (athenaclirc == ATHENACLIRC) and (not os.path.exists(os.path.expanduser(ATHENACLIRC))):
+    if (athenaclirc == ATHENACLIRC) and (not os.path.exists(os.path.expanduser(athenaclirc))):
         err_msg = '''
         Welcome to athenacli!
 
@@ -632,9 +632,9 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
         we generated a default config file for you
             %s
         Please change it accordingly, and run athenacli again.
-        ''' % ATHENACLIRC
+        ''' % athenaclirc
         print(err_msg)
-        write_default_config(DEFAULT_CONFIG_FILE, ATHENACLIRC)
+        write_default_config(DEFAULT_CONFIG_FILE, athenaclirc)
         sys.exit(1)
 
     if profile != 'default':
