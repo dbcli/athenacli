@@ -1,6 +1,8 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+* Improve performance of CSV formatter when handling NULLs
+
 1.4.1
 =========
 

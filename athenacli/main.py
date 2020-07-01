@@ -432,8 +432,9 @@ For more details about the error, you can check the log file: %s''' % (athenacli
             'disable_numparse': True,
             'preserve_whitespace': True,
             'preprocessors': (preprocessors.align_decimals, ),
-            'style': self.output_style
         }
+        if self.formatter.format_name != 'csv':
+            output_kwargs['style'] = self.output_style
 
         if title:  # Only print the title if it's not None.
             output = itertools.chain(output, [title])
