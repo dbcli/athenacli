@@ -219,6 +219,34 @@ def subst_favorite_query_args(query, args):
 
     return [query, None]
 
+ @special_command('load', 'load [filename]', 'Load and execute query from a file.')
+ def execute_file_query(cur, arg, **_):
+     filename = arg
+     if filename:
+         try:
+             with open(filename, encoding='utf-8') as f:
+                 query = f.read()
+                 for sql in sqlparse.split(query):
+                     _logger.debug("query is [%s]", sql)
+                     sql = sql.rstrip(';')
+                     destructive_prompt = confirm_destructive_query(sql)
+                     if destructive_prompt is False:
+                         click.secho("Wise choice!")
+                         return
+                     elif destructive_prompt is True:
+                         click.secho("Your call!")
+
+                     title = '%s' % (sql)
+                     cur.execute(sql)
+                     if cur.description:
+                         headers = [x[0] for x in cur.description]
+                         yield (title, cur.fetchall(), headers, None)
+                     else:
+                         yield (title, None, None, None)
+
+         except IOError:
+             message = 'Error reading file: %s.' % filename
+             yield (None, None, None, message)
 
 @special_command('\\fs', '\\fs name query', 'Save a favorite query.')
 def save_favorite_query(arg, **_):
