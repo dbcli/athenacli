@@ -18,6 +18,7 @@ Contributors:
   * Aaron Brager
   * Patrick Park
   * Jan Katins
+  * Scott Morgan
 
 Creator:
 --------
