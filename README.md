@@ -22,7 +22,7 @@ If you already know how to install python packages, then you can simply do:
 $ pip install athenacli
 ```
 
-## Install via `brew`
+### Install via `brew`
 
 [Homebrew](https://brew.sh/) users can install by:
 
