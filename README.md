@@ -14,13 +14,23 @@ AthenaCLI is a command line interface (CLI) for the [Athena](https://aws.amazon.
 
 ## Install
 
+### Install via `pip`
+
 If you already know how to install python packages, then you can simply do:
 
 ``` bash
 $ pip install athenacli
 ```
 
-If you don't know how to install python packages, please check the [Install](./docs/install.rst) page for more options (e.g brew, docker)
+## Install via `brew`
+
+[Homebrew](https://brew.sh/) users can install by:
+
+```sh
+$ brew install athenacli
+```
+
+If you don't know how to install python packages, please check the [Install](./docs/install.rst) page for more options (e.g docker)
 
 ## Config
 
