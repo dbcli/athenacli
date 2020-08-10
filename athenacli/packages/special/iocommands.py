@@ -219,7 +219,7 @@ def subst_favorite_query_args(query, args):
 
     return [query, None]
 
-@special_command('load', 'load [filename]', 'Load and execute query from a file.')
+@special_command('read', 'read [filename]', 'Read and execute query from a file.')
 def execute_file_query(cur, arg, **_):
     filename = arg
     if filename:
@@ -227,6 +227,9 @@ def execute_file_query(cur, arg, **_):
             with open(filename, encoding='utf-8') as f:
                 query = f.read()
                 for sql in sqlparse.split(query):
+                    if not sql:
+                        continue
+
                     _logger.debug("query is [%s]", sql)
                     sql = sql.rstrip(';')
                     destructive_prompt = confirm_destructive_query(sql)
