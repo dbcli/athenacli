@@ -1,6 +1,11 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+
+
+1.5.0
+=========
+
 Features:
 ----------
 * Add homebrew installation support. ((Thanks: @chenrui333))

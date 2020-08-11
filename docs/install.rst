@@ -30,5 +30,4 @@ For MacOS users, you can also use Homebrew to install it:
 
 .. code-block:: bash
 
-    $ brew tap dbcli/tap
     $ brew install athenacli
