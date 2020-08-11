@@ -4,6 +4,7 @@
 Features:
 ----------
 * Add homebrew installation support. ((Thanks: @chenrui333))
+* Add a load command to load and execute a SQL file while in the REPL. (Thanks: @sco11morgan)
 
 1.4.1
 =========
