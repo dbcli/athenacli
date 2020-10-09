@@ -1,7 +1,7 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
-
+* Add support for configuring Athena workgroup ((Thanks: @warfox))
 
 1.5.0
 =========

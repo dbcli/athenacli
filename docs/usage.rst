@@ -23,13 +23,17 @@ Options
     --aws-secret-access-key TEXT  AWS secretaccess key.
     --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                     results are stored.
+    --work-group TEXT             Amazon Athena workgroup in which query is run, default is primary
     --athenaclirc PATH            Location of athenaclirc file.
     --help                        Show this message and exit.
 
 Connect to a database
 ------------------------
 
-Connect a specific database with AWS credentials, region name and S3 staging directory. AWS credentials, region name and S3 staging directory are optional. You can set those variables in `athenaclirc` config file, and then run below command.
+Connect a specific database with AWS credentials, region name and S3 staging
+directory or work group. AWS credentials, region name and S3 staging directory
+are optional. You can set those variables in `athenaclirc` config file, and then
+run below command.
 
 .. code-block:: bash
 

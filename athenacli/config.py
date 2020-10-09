@@ -19,7 +19,7 @@ LOGGER = logging.getLogger(__name__)
 
 class AWSConfig(object):
     def __init__(self, aws_access_key_id, aws_secret_access_key,
-                 region, s3_staging_dir, profile, config):
+                 region, s3_staging_dir, work_group, profile, config):
         key = 'aws_profile %s' % profile
         try:
             _cfg = config[key]
@@ -33,6 +33,7 @@ class AWSConfig(object):
         self.aws_secret_access_key = self.get_val(aws_secret_access_key, _cfg['aws_secret_access_key'])
         self.region = self.get_val(region, _cfg['region'], self.get_region())
         self.s3_staging_dir = self.get_val(s3_staging_dir, _cfg['s3_staging_dir'])
+        self.work_group = self.get_val(work_group, _cfg['work_group'])
         # enable connection to assume role
         self.role_arn = self.get_val(_cfg.get('role_arn'))
 

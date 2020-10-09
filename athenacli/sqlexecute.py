@@ -25,6 +25,7 @@ class SQLExecute(object):
         aws_secret_access_key,
         region_name,
         s3_staging_dir,
+        work_group,
         role_arn,
         database
     ):
@@ -32,6 +33,7 @@ class SQLExecute(object):
         self.aws_secret_access_key = aws_secret_access_key
         self.region_name = region_name
         self.s3_staging_dir = s3_staging_dir
+        self.work_group = work_group
         self.role_arn = role_arn
         self.database = database
 
@@ -43,6 +45,7 @@ class SQLExecute(object):
             aws_secret_access_key=self.aws_secret_access_key,
             region_name=self.region_name,
             s3_staging_dir=self.s3_staging_dir,
+            work_group=self.work_group,
             schema_name=database or self.database,
             role_arn=self.role_arn,
             poll_interval=0.2 # 200ms
