@@ -40,6 +40,9 @@ Below 4 variables are required.
     # The format is 's3://<your s3 directory path>'
     s3_staging_dir = ''
 
+    # Name of athena workgroup that you want to use
+    work_group = '' # e.g. primary
+
 Create a table
 ---------------
 

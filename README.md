@@ -48,6 +48,9 @@ region = '' # e.g us-west-2, us-east-1
 # NOTE: S3 should in the same region as specified above.
 # The format is 's3://<your s3 directory path>'
 s3_staging_dir = ''
+
+# Name of athena workgroup that you want to use
+work_group = '' # e.g. primary
 ```
 
 or you can also use environment variables:
@@ -57,6 +60,7 @@ $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
 $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
 $ export AWS_DEFAULT_REGION=us-west-2
 $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
+$ export AWS_ATHENA_WORK_GROUP=YOUR_ATHENA_WORK_GROUP
 ```
 
 ## Create a table
@@ -111,6 +115,7 @@ Options:
 --aws-secret-access-key TEXT  AWS secretaccess key.
 --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                 results are stored.
+--work-group TEXT             Amazon Athena workgroup in which query is run, default is primary
 --athenaclirc PATH            Location of athenaclirc file.
 --help                        Show this message and exit.
 ```
