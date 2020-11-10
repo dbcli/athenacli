@@ -16,7 +16,7 @@ def statistics(cursor):
         approx_cost = cursor.data_scanned_in_bytes / (1024 ** 4) * 5
 
         return '\nExecution time: %d ms, Data scanned: %s, Approximate cost: $%.2f' % (
-                cursor.execution_time_in_millis,
+                cursor.engine_execution_time_in_millis,
                 humanize_size(cursor.data_scanned_in_bytes),
                 approx_cost)
     else:
