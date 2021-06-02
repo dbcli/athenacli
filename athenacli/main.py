@@ -616,9 +616,10 @@ def is_mutating(status):
 @click.option('--work_group', type=str, help="Amazon Athena workgroup in which query is run, default is primary")
 @click.option('--athenaclirc', default=ATHENACLIRC, type=click.Path(dir_okay=False), help="Location of athenaclirc file.")
 @click.option('--profile', type=str, default='default', help='AWS profile')
+@click.option('--tableformat', type=str, default='csv', help='Table format used with -e option.')
 @click.argument('database', default='default', nargs=1)
 def cli(execute, region, aws_access_key_id, aws_secret_access_key,
-        s3_staging_dir, work_group, athenaclirc, profile, database):
+        s3_staging_dir, work_group, athenaclirc, profile, tableformat, database):
     '''A Athena terminal client with auto-completion and syntax highlighting.
 
     \b
@@ -666,7 +667,7 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
         else:
             query = execute
         try:
-            athenacli.formatter.format_name = 'csv'
+            athenacli.formatter.format_name = tableformat
             athenacli.run_query(query)
             exit(0)
         except Exception as e:
