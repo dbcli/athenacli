@@ -3,7 +3,7 @@
 
 Features:
 ----------
-* Add `--tableformat` to change format used in `-e` mode.
+* Add `--table-format` to change format used in `-e` mode.
 
 1.6.1
 =========
