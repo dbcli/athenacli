@@ -22,6 +22,7 @@ Contributors:
   * Scott Morgan
   * Deepu Mohan Puthrote
   * Toska Chin
+  * Pete Sheridan
 
 Creator:
 --------

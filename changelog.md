@@ -1,12 +1,16 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+Features:
+----------
+* Add `--table-format` to change format used in `-e` mode.
+
 1.6.1
 =========
 
 Bugfix:
 ----------
-* update cursor.execution_time_in_millis to cursor.engine_execution_time_in_millis as libary PyAthena removed execution_time_in_millis 
+* update cursor.execution_time_in_millis to cursor.engine_execution_time_in_millis as libary PyAthena removed execution_time_in_millis
 
 1.6.0
 =========
