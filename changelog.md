@@ -1,9 +1,12 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+1.6.2
+=========
+
 Features:
 ----------
-* Add `--table-format` to change format used in `-e` mode.
+* Add `--table-format` to change format used in `-e` mode. (Thanks: @ptshrdn)
 
 1.6.1
 =========
