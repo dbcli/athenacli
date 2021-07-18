@@ -8,24 +8,27 @@ Options
 .. code-block:: bash
 
     $ athenacli --help
-    Usage: main.py [OPTIONS] [DATABASE]
+    Usage: athenacli [OPTIONS] [DATABASE]
 
-    A Athena terminal client with auto-completion and syntax highlighting.
+      A Athena terminal client with auto-completion and syntax highlighting.
 
-    Examples:
+      Examples:
         - athenacli
         - athenacli my_database
 
     Options:
-    -e, --execute TEXT            Execute a command (or a file) and quit.
-    -r, --region TEXT             AWS region.
-    --aws-access-key-id TEXT      AWS access key id.
-    --aws-secret-access-key TEXT  AWS secretaccess key.
-    --s3-staging-dir TEXT         Amazon S3 staging directory where query
+      -e, --execute TEXT            Execute a command (or a file) and quit.
+      -r, --region TEXT             AWS region.
+      --aws-access-key-id TEXT      AWS access key id.
+      --aws-secret-access-key TEXT  AWS secretaccess key.
+      --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                     results are stored.
-    --work-group TEXT             Amazon Athena workgroup in which query is run, default is primary
-    --athenaclirc PATH            Location of athenaclirc file.
-    --help                        Show this message and exit.
+      --work_group TEXT             Amazon Athena workgroup in which query is run,
+                                    default is primary
+      --athenaclirc FILE            Location of athenaclirc file.
+      --profile TEXT                AWS profile
+      --table-format TEXT           Table format used with -e option.
+      --help                        Show this message and exit.
 
 Connect to a database
 ------------------------

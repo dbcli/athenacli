@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/dbcli/athenacli.svg?branch=master)](https://travis-ci.org/dbcli/athenacli)
 [![PyPI](https://img.shields.io/pypi/v/athenacli.svg)](https://pypi.python.org/pypi/athenacli)
+[![Downloads](https://pepy.tech/badge/athenacli)](https://pepy.tech/project/athenacli)
 [![image](https://img.shields.io/pypi/l/athenacli.svg)](https://pypi.org/project/athenacli/)
 [![image](https://img.shields.io/pypi/pyversions/athenacli.svg)](https://pypi.org/project/athenacli/)
 [![Join the chat at https://gitter.im/dbcli/athenacli](https://badges.gitter.im/dbcli/athenacli.svg)](https://gitter.im/dbcli/athenacli?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
