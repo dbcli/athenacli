@@ -1,6 +1,8 @@
 (Unreleased; add upcoming change notes here)
 ==============================================
 
+* Pinned pygments due to regression in 2.11.2
+
 1.6.2
 =========
 
