@@ -1,3 +1,9 @@
+1.6.4 (2022/04/24)
+==================
+
+* Upgrade prompt_toolkit (Thanks @zzl0)
+* Fix a DeprecationWarning in Python re (Thanks @zzl0)
+
 1.6.3 (2022/01/11)
 ==================
 
