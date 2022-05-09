@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import sys
 import select
 import click
@@ -26,7 +27,6 @@ from prompt_toolkit.lexers import PygmentsLexer
 from prompt_toolkit.filters import HasFocus, IsDone
 from prompt_toolkit.enums import DEFAULT_BUFFER, EditingMode
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from pygments.lexers.sql import SqlLexer
 from cli_helpers.tabular_output import TabularOutputFormatter
 from cli_helpers.tabular_output import preprocessors
 from pyathena.error import OperationalError
@@ -572,7 +572,7 @@ For more details about the error, you can check the log file: %s''' % (athenacli
         """Get the number of lines to reserve for the completion menu."""
         reserved_space_ratio = .45
         max_reserved_space = 8
-        _, height = click.get_terminal_size()
+        _, height = shutil.get_terminal_size()
         return min(int(round(height * reserved_space_ratio)), max_reserved_space)
 
     def get_last_query(self):
