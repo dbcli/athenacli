@@ -1,3 +1,15 @@
+TBD
+=====
+
+
+1.6.6 (2022/05/09)
+==================
+
+Bugfix:
+--------
+* Use get_terminal_size from shutil instead of click. (Thanks @ByronLeeLee)
+
+
 1.6.5 (2022/04/24)
 ==================
 
@@ -33,7 +45,7 @@ Bugfix:
 
 Features:
 ----------
-* Add support for configuring Athena workgroup ((Thanks: @warfox))
+* Add support for configuring Athena workgroup (Thanks: @warfox)
 
 1.5.0
 =========
