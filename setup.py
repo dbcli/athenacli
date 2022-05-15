@@ -20,7 +20,7 @@ install_requirements = [
     'click>=7.0',
     'Pygments>=1.6,<=2.11.1',
     "prompt_toolkit>=3.0.3,<4.0.0",
-    'sqlparse>=0.3.0,<0.4.0',
+    'sqlparse>=0.3.0,<0.5.0',
     'configobj>=5.0.5',
     'cli_helpers[styles]>=1.1.0',
     'botocore>=1.5.52',
