@@ -25,6 +25,7 @@ Contributors:
   * Pete Sheridan
   * Anthony Ross
   * Li Ben Yuan
+  * Alex Gaynor
 
 Creator:
 --------
