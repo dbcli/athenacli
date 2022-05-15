@@ -1,6 +1,9 @@
 TBD
 =====
 
+1.6.7 (2022/05/14)
+==================
+
 * Update sqlparse dependency max version
 
 1.6.6 (2022/05/09)
