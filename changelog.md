@@ -1,7 +1,10 @@
 TBD
 =====
 
-* Remove unneeded `sqlparse.compat` import
+1.6.8 (2022/05/15)
+===================
+
+* Remove unneeded `sqlparse.compat` import. (Thanks @branchvincent)
 
 1.6.7 (2022/05/14)
 ==================
