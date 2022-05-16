@@ -26,6 +26,7 @@ Contributors:
   * Anthony Ross
   * Li Ben Yuan
   * Alex Gaynor
+  * Branch Vincent
 
 Creator:
 --------
