@@ -4,7 +4,6 @@ import sqlparse
 import logging
 from collections import namedtuple
 from sqlparse.sql import Comparison, Identifier, Where
-from sqlparse.compat import text_type
 
 from athenacli.packages.parseutils import last_word, extract_tables, find_prev_keyword
 from athenacli.packages.special import parse_special_command
@@ -81,7 +80,7 @@ def suggest_type(full_text, text_before_cursor):
         stmt_start, stmt_end = 0, 0
 
         for statement in parsed:
-            stmt_len = len(text_type(statement))
+            stmt_len = len(str(statement))
             stmt_start, stmt_end = stmt_end, stmt_end + stmt_len
 
             if stmt_end >= current_pos:
