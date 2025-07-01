@@ -29,6 +29,11 @@ class SQLExecute(object):
         role_arn,
         database
     ):
+        # Handle database parameter that may contain catalog.database format
+        if database and '.' in database:
+            catalog_name, database = database.split('.', 1)
+        else:
+            catalog_name = None
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.region_name = region_name
@@ -36,10 +41,15 @@ class SQLExecute(object):
         self.work_group = work_group
         self.role_arn = role_arn
         self.database = database
-
+        self.catalog_name = catalog_name or 'AwsDataCatalog'
         self.connect()
 
     def connect(self, database=None):
+        # Handle database parameter that may contain catalog.database format
+        if database and '.' in database:
+            catalog_name, database = database.split('.', 1)
+        else:
+            catalog_name = None
         conn = pyathena.connect(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
@@ -48,7 +58,8 @@ class SQLExecute(object):
             work_group=self.work_group,
             schema_name=database or self.database,
             role_arn=self.role_arn,
-            poll_interval=0.2 # 200ms
+            poll_interval=0.2, # 200ms
+            catalog_name=catalog_name or self.catalog_name
         )
         self.database = database or self.database
 
