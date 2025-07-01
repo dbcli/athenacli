@@ -101,7 +101,7 @@ Please refer to the [Features](./docs/features.rst) page for the screenshots of 
 
 ```bash
 $ athenacli --help
-Usage: main.py [OPTIONS] [DATABASE]
+Usage: main.py [OPTIONS] [CATALOG.][DATABASE]
 
 A Athena terminal client with auto-completion and syntax highlighting.
 
