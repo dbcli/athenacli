@@ -27,6 +27,7 @@ Contributors:
   * Li Ben Yuan
   * Alex Gaynor
   * Branch Vincent
+  * Jacob Williams
 
 Creator:
 --------

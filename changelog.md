@@ -1,6 +1,8 @@
 TBD
 =====
 
+* Allow catalog to be specified as part of the database argument. ([<catalog>.]<database>)
+
 1.6.8 (2022/05/15)
 ===================
 
