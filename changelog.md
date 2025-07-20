@@ -1,6 +1,14 @@
-TBD
-=====
+1.7.0 (TBD)
+============
 
+Features:
+---------
+* Add support for Amazon Athena query result reuse with configurable TTL
+  - Add `--result-reuse-enable` CLI option to enable/disable query result reuse
+  - Add `--result-reuse-minutes` CLI option to configure TTL in minutes
+  - Add `result_reuse_enable` and `result_reuse_minutes` configuration options in athenaclirc
+  - Requires Athena engine version 3
+  - Can drastically improve query performance for repeated queries
 * Allow catalog to be specified as part of the database argument. ([<catalog>.]<database>)
 
 1.6.8 (2022/05/15)
@@ -25,7 +33,6 @@ Bugfix:
 ==================
 
 * Update the default branch to 'main'
-
 1.6.4 (2022/04/24)
 ==================
 
