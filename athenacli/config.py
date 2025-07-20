@@ -19,15 +19,19 @@ LOGGER = logging.getLogger(__name__)
 
 class AWSConfig(object):
     def __init__(self, aws_access_key_id, aws_secret_access_key,
-                 region, s3_staging_dir, work_group, profile, config):
+                 region, s3_staging_dir, work_group, profile, config,
+                 result_reuse_enable=None, result_reuse_minutes=None):
         key = 'aws_profile %s' % profile
         try:
             _cfg = config[key]
-        except:
+        except Exception as e:
             # this assumes that the profile is only known in the regular AWS config -> the boto lib will get it
             # from there. This is especially important if we have some kind of additional temporary session keys for
             # which the login fails if we set aws_access_key_id/aws_secret_access_key here
             _cfg = defaultdict(lambda: None)
+            # For result reuse settings, provide explicit defaults when profile section is missing
+            _cfg['result_reuse_enable'] = 'False'
+            _cfg['result_reuse_minutes'] = '60'
 
         self.aws_access_key_id = self.get_val(aws_access_key_id, _cfg['aws_access_key_id'])
         self.aws_secret_access_key = self.get_val(aws_secret_access_key, _cfg['aws_secret_access_key'])
@@ -36,6 +40,23 @@ class AWSConfig(object):
         self.work_group = self.get_val(work_group, _cfg['work_group'])
         # enable connection to assume role
         self.role_arn = self.get_val(_cfg.get('role_arn'))
+        # query result reuse settings
+        config_reuse_enable = _cfg.get('result_reuse_enable')
+        if config_reuse_enable and isinstance(config_reuse_enable, str):
+            config_reuse_enable = config_reuse_enable.lower() in ('true', '1', 'yes', 'on')
+        elif config_reuse_enable is None:
+            config_reuse_enable = False
+        self.result_reuse_enable = result_reuse_enable if result_reuse_enable is not None else config_reuse_enable
+        
+        config_reuse_minutes = _cfg.get('result_reuse_minutes')  
+        if config_reuse_minutes and isinstance(config_reuse_minutes, str):
+            try:
+                config_reuse_minutes = int(config_reuse_minutes)
+            except ValueError:
+                config_reuse_minutes = 60
+        elif config_reuse_minutes is None:
+            config_reuse_minutes = 60
+        self.result_reuse_minutes = self.get_val(result_reuse_minutes, config_reuse_minutes, 60)
 
     def get_val(self, *vals):
         """Return the first True value in `vals` list, otherwise return None."""

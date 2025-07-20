@@ -61,7 +61,8 @@ class AthenaCli(object):
     MAX_LEN_PROMPT = 45
 
     def __init__(self, region, aws_access_key_id, aws_secret_access_key,
-                 s3_staging_dir, work_group, athenaclirc, profile, database):
+                 s3_staging_dir, work_group, athenaclirc, profile, database,
+                 result_reuse_enable=None, result_reuse_minutes=None):
 
         config_files = [DEFAULT_CONFIG_FILE]
         if os.path.exists(os.path.expanduser(athenaclirc)):
@@ -71,7 +72,8 @@ class AthenaCli(object):
         self.init_logging(_cfg['main']['log_file'], _cfg['main']['log_level'])
 
         aws_config = AWSConfig(
-            aws_access_key_id, aws_secret_access_key, region, s3_staging_dir, work_group, profile, _cfg
+            aws_access_key_id, aws_secret_access_key, region, s3_staging_dir, work_group, profile, _cfg,
+            result_reuse_enable, result_reuse_minutes
         )
 
         try:
@@ -200,7 +202,9 @@ For more details about the error, you can check the log file: %s''' % (athenacli
             s3_staging_dir = aws_config.s3_staging_dir,
             work_group = aws_config.work_group,
             role_arn = aws_config.role_arn,
-            database = database
+            database = database,
+            result_reuse_enable = aws_config.result_reuse_enable,
+            result_reuse_minutes = aws_config.result_reuse_minutes
         )
 
     def handle_editor_command(self, text):
@@ -616,10 +620,13 @@ def is_mutating(status):
 @click.option('--work_group', type=str, help="Amazon Athena workgroup in which query is run, default is primary")
 @click.option('--athenaclirc', default=ATHENACLIRC, type=click.Path(dir_okay=False), help="Location of athenaclirc file.")
 @click.option('--profile', type=str, default='default', help='AWS profile')
+@click.option('--result-reuse-enable', default=None, type=bool, help='Enable query result reuse (requires Athena engine version 3)')
+@click.option('--result-reuse-minutes', type=int, help='TTL for query result reuse in minutes (default: 60)')
 @click.option('--table-format', type=str, default='csv', help='Table format used with -e option.')
 @click.argument('database', default='default', nargs=1)
 def cli(execute, region, aws_access_key_id, aws_secret_access_key,
-        s3_staging_dir, work_group, athenaclirc, profile, table_format, database):
+        s3_staging_dir, work_group, athenaclirc, profile, result_reuse_enable, 
+        result_reuse_minutes, table_format, database):
     '''A Athena terminal client with auto-completion and syntax highlighting.
 
     \b
@@ -651,6 +658,8 @@ def cli(execute, region, aws_access_key_id, aws_secret_access_key,
         work_group=work_group,
         athenaclirc=athenaclirc,
         profile=profile,
+        result_reuse_enable=result_reuse_enable,
+        result_reuse_minutes=result_reuse_minutes,
         database=database
     )
 
