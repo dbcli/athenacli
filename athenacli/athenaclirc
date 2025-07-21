@@ -17,6 +17,10 @@ s3_staging_dir = ''
 # Name of athena workgroup that you want to use
 work_group = '' # e.g. primary
 
+# Query result reuse settings (requires Athena engine version 3)
+result_reuse_enable = False
+result_reuse_minutes = 60
+
 [main]
 # log_file location.
 log_file = ~/.athenacli/app.log

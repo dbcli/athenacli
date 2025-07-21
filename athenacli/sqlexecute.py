@@ -27,7 +27,9 @@ class SQLExecute(object):
         s3_staging_dir,
         work_group,
         role_arn,
-        database
+        database,
+        result_reuse_enable=False,
+        result_reuse_minutes=60
     ):
         # Handle database parameter that may contain catalog.database format
         if database and '.' in database:
@@ -42,6 +44,8 @@ class SQLExecute(object):
         self.role_arn = role_arn
         self.database = database
         self.catalog_name = catalog_name or 'AwsDataCatalog'
+        self.result_reuse_enable = result_reuse_enable
+        self.result_reuse_minutes = result_reuse_minutes
         self.connect()
 
     def connect(self, database=None):
@@ -50,17 +54,26 @@ class SQLExecute(object):
             catalog_name, database = database.split('.', 1)
         else:
             catalog_name = None
-        conn = pyathena.connect(
-            aws_access_key_id=self.aws_access_key_id,
-            aws_secret_access_key=self.aws_secret_access_key,
-            region_name=self.region_name,
-            s3_staging_dir=self.s3_staging_dir,
-            work_group=self.work_group,
-            schema_name=database or self.database,
-            role_arn=self.role_arn,
-            poll_interval=0.2, # 200ms
-            catalog_name=catalog_name or self.catalog_name
-        )
+            
+        # Prepare connection parameters
+        conn_params = {
+            'aws_access_key_id': self.aws_access_key_id,
+            'aws_secret_access_key': self.aws_secret_access_key,
+            'region_name': self.region_name,
+            's3_staging_dir': self.s3_staging_dir,
+            'work_group': self.work_group,
+            'schema_name': database or self.database,
+            'role_arn': self.role_arn,
+            'poll_interval': 0.2,  # 200ms
+            'catalog_name': catalog_name or self.catalog_name
+        }
+        
+        # Add result reuse parameters if enabled
+        if self.result_reuse_enable:
+            conn_params['result_reuse_enable'] = True
+            conn_params['result_reuse_minutes'] = self.result_reuse_minutes
+            
+        conn = pyathena.connect(**conn_params)
         self.database = database or self.database
 
         if hasattr(self, 'conn'):
