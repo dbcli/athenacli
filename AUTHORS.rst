@@ -28,6 +28,7 @@ Contributors:
   * Alex Gaynor
   * Branch Vincent
   * Jacob Williams
+  * Markus Tauchnitz
 
 Creator:
 --------
