@@ -117,7 +117,7 @@ def get_editor_query(sql):
     # The reason we can't simply do .strip('\e') is that it strips characters,
     # not a substring. So it'll strip "e" in the end of the sql also!
     # Ex: "select * from style\e" -> "select * from styl".
-    pattern = re.compile('(^\\\e|\\\e$)')
+    pattern = re.compile(r'(^\e|\e$)')
     while pattern.search(sql):
         sql = pattern.sub('', sql)
 
@@ -213,7 +213,7 @@ def subst_favorite_query_args(query, args):
 
         query = query.replace(subst_var, val)
 
-    match = re.search('\\$\d+', query)
+    match = re.search(r'\$\d+', query)
     if match:
         return[None, 'missing substitution for ' + match.group(0) + ' in query:\n  ' + query]
 

@@ -205,7 +205,7 @@ For more details about the error, you can check the log file: %s''' % (athenacli
         )
 
     def handle_editor_command(self, text):
-        """
+        r"""
         Editor command is any query that is prefixed or suffixed
         by a '\e'. The reason for a while loop is because a user
         might edit a query multiple times.

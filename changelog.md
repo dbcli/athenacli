@@ -3,6 +3,7 @@ TBD
 
 * Add support for AWS session token via --aws-session-token option and aws_session_token config field.
 * Allow catalog to be specified as part of the database argument. ([<catalog>.]<database>)
+* Fix warnings related to escape sequences when running with > Python 3.12
 
 1.6.8 (2022/05/15)
 ===================
