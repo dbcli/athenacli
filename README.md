@@ -43,6 +43,7 @@ Below 4 variables are required. If you are a user of aws cli, you can refer to [
 # AWS credentials
 aws_access_key_id = ''
 aws_secret_access_key = ''
+aws_session_token = ''
 region = '' # e.g us-west-2, us-east-1
 
 # Amazon S3 staging directory where query results are stored.
@@ -59,6 +60,7 @@ or you can also use environment variables:
 ``` bash
 $ export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY_ID
 $ export AWS_SECRET_ACCESS_KEY=YOUR_SECRET_ACCESS_KEY
+$ export AWS_SESSION_TOKEN=YOUR_SESSION_TOKEN
 $ export AWS_DEFAULT_REGION=us-west-2
 $ export AWS_ATHENA_S3_STAGING_DIR=s3://YOUR_S3_BUCKET/path/to/
 $ export AWS_ATHENA_WORK_GROUP=YOUR_ATHENA_WORK_GROUP
@@ -114,6 +116,7 @@ Options:
 -r, --region TEXT             AWS region.
 --aws-access-key-id TEXT      AWS access key id.
 --aws-secret-access-key TEXT  AWS secretaccess key.
+--aws-session-token TEXT      AWS session token.
 --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                 results are stored.
 --work-group TEXT             Amazon Athena workgroup in which query is run, default is primary
