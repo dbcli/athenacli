@@ -29,6 +29,7 @@ Contributors:
   * Branch Vincent
   * Jacob Williams
   * Markus Tauchnitz
+  * David Gayda
 
 Creator:
 --------

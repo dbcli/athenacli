@@ -18,7 +18,7 @@ LOGGER = logging.getLogger(__name__)
 
 
 class AWSConfig(object):
-    def __init__(self, aws_access_key_id, aws_secret_access_key,
+    def __init__(self, aws_access_key_id, aws_secret_access_key, aws_session_token,
                  region, s3_staging_dir, work_group, profile, config):
         key = 'aws_profile %s' % profile
         try:
@@ -31,6 +31,7 @@ class AWSConfig(object):
 
         self.aws_access_key_id = self.get_val(aws_access_key_id, _cfg['aws_access_key_id'])
         self.aws_secret_access_key = self.get_val(aws_secret_access_key, _cfg['aws_secret_access_key'])
+        self.aws_session_token = self.get_val(aws_session_token, _cfg['aws_session_token'])
         self.region = self.get_val(region, _cfg['region'], self.get_region())
         self.s3_staging_dir = self.get_val(s3_staging_dir, _cfg['s3_staging_dir'])
         self.work_group = self.get_val(work_group, _cfg['work_group'])

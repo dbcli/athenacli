@@ -21,6 +21,7 @@ Options
       -r, --region TEXT             AWS region.
       --aws-access-key-id TEXT      AWS access key id.
       --aws-secret-access-key TEXT  AWS secretaccess key.
+      --aws-session-token TEXT      AWS session token.
       --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                     results are stored.
       --work_group TEXT             Amazon Athena workgroup in which query is run,

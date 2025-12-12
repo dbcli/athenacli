@@ -23,6 +23,7 @@ class SQLExecute(object):
         self,
         aws_access_key_id,
         aws_secret_access_key,
+        aws_session_token,
         region_name,
         s3_staging_dir,
         work_group,
@@ -36,6 +37,7 @@ class SQLExecute(object):
             catalog_name = None
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
+        self.aws_session_token = aws_session_token
         self.region_name = region_name
         self.s3_staging_dir = s3_staging_dir
         self.work_group = work_group
@@ -53,6 +55,7 @@ class SQLExecute(object):
         conn = pyathena.connect(
             aws_access_key_id=self.aws_access_key_id,
             aws_secret_access_key=self.aws_secret_access_key,
+            aws_session_token=self.aws_session_token,
             region_name=self.region_name,
             s3_staging_dir=self.s3_staging_dir,
             work_group=self.work_group,
