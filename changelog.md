@@ -1,4 +1,4 @@
-TBD
+1.7.0 (2026/04/23)
 =====
 
 * Add support for AWS session token via --aws-session-token option and aws_session_token config field.
