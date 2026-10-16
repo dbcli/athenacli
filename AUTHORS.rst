@@ -30,6 +30,7 @@ Contributors:
   * Jacob Williams
   * Markus Tauchnitz
   * David Gayda
+  * dajiaohuang
 
 Creator:
 --------
