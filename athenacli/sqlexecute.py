@@ -28,13 +28,12 @@ class SQLExecute(object):
         s3_staging_dir,
         work_group,
         role_arn,
-        database
+        database,
+        catalog_name=None
     ):
         # Handle database parameter that may contain catalog.database format
         if database and '.' in database:
             catalog_name, database = database.split('.', 1)
-        else:
-            catalog_name = None
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
         self.aws_session_token = aws_session_token
@@ -65,6 +64,7 @@ class SQLExecute(object):
             catalog_name=catalog_name or self.catalog_name
         )
         self.database = database or self.database
+        self.catalog_name = catalog_name or self.catalog_name
 
         if hasattr(self, 'conn'):
             self.conn.close()

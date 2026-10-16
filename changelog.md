@@ -1,3 +1,8 @@
+TBD
+=====
+
+* Preserve the selected catalog when refreshing completions and changing databases.
+
 1.7.0 (2026/04/23)
 =====
 
