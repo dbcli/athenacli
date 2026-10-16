@@ -119,7 +119,7 @@ Options:
 --aws-session-token TEXT      AWS session token.
 --s3-staging-dir TEXT         Amazon S3 staging directory where query
                                 results are stored.
---work-group TEXT             Amazon Athena workgroup in which query is run, default is primary
+--work_group TEXT             Amazon Athena workgroup in which query is run, default is primary
 --athenaclirc PATH            Location of athenaclirc file.
 --help                        Show this message and exit.
 ```

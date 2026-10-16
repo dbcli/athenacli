@@ -8,7 +8,7 @@ Precedence
 
 The AthenaCLI looks for credentials and configuration settings in the following order:
 
-1. **Command line options** – aws-access-key-id, aws-secret-access-key, aws-session-token, region, s3-staging-dir, work-group can be specified as command options to override default settings.
+1. **Command line options** – aws-access-key-id, aws-secret-access-key, aws-session-token, region, s3-staging-dir, work_group can be specified as command options to override default settings.
 2. **AthenaCLI config file** – typically located at `~/.athenacli/athenaclirc` on Linux, macOS, or Unix. This file can contain multiple named profiles in addition to a default profile. Just adds `--profile [PROFILE_NAME]` at the end of athenacli command to use those configurations.
 3. **Environment variables** – AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_SESSION_TOKEN, AWS_DEFAULT_REGION, AWS_ATHENA_S3_STAGING_DIR, AWS_ATHENA_WORK_GROUP
 4. **AWS credentials file** – located at `~/.aws/credentials` on Linux, macOS, or Unix. This file can contain multiple named profiles in addition to a default profile. Please refer to `AWS CLI` for more information.

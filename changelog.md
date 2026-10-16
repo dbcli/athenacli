@@ -1,3 +1,8 @@
+TBD
+=====
+
+* Correct the documented workgroup option to --work_group.
+
 1.7.0 (2026/04/23)
 =====
 
