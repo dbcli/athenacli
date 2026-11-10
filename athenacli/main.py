@@ -606,7 +606,10 @@ def is_mutating(status):
 
     mutating = set(['insert', 'update', 'delete', 'alter', 'create', 'drop',
                     'replace', 'truncate', 'load'])
-    return status.split(None, 1)[0].lower() in mutating
+    parts = status.split(None, 1)
+    if not parts:
+        return False
+    return parts[0].lower() in mutating
 
 @click.command()
 @click.option('-e', '--execute', type=str, help='Execute a command (or a file) and quit.')
